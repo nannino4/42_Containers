@@ -30,56 +30,101 @@ namespace ft
     /* COPLIEN FORM
     /* ------------------------------------------------------------- */
 	public:
-	// Default constructor
-	random_access_iterator(pointer element = 0) : _element(element) {}
-	// Copy constructor
-	random_access_iterator(const random_access_iterator& other) : _element(other._element) {}
-	// Assign operator
-    random_access_iterator& operator=(const random_access_iterator& other)
-    {
-        if (this != &other)
-            this->_element = other._element;
-        return (*this);
-    }
-	// Destructor
-	~random_access_iterator() {}
+		// Default constructor
+		random_access_iterator(pointer element = 0) : _element(element) {}
+		// Copy constructor
+		random_access_iterator(const random_access_iterator<value_type> &other) : _element(other._element) {}
+		// Assign operator
+	    random_access_iterator& operator=(const random_access_iterator<value_type> &other)
+	    {
+	        if (this != &other)
+	            this->_element = other._element;
+	        return (*this);
+	    }
+		// Destructor
+		~random_access_iterator() {}
 
 
     /* ------------------------------------------------------------- */
     /* GETTERS
     /* ------------------------------------------------------------- */
-	pointer getElement() const { return _element; }
+	public:
+		pointer getElement() const { return _element; }
 
 
     /* ------------------------------------------------------------- */
     /* OPERATOR OVERLOADS
     /* ------------------------------------------------------------- */
+	public:
+	    reference operator*() const { return (*_element); }
+	    pointer operator->() const { return (_element); }
 
-        reference operator*() const { return (*_element); }
-        pointer operator->() const { return (_element); }
+	    random_access_iterator& operator++()
+		{
+			++_element;
+			return (*this);
+		}
 
-        random_access_iterator& operator++() { ++_element; return (*this); }
-        random_access_iterator& operator--() { --_element; return (*this); }
+	    random_access_iterator operator++(int)
+	    {
+	        random_access_iterator ret(*this);
+	        ++(*this);
+	        return (ret);
+	    }
 
-        random_access_iterator operator++(int)
+		random_access_iterator& operator--()
+		{
+			--_element;
+			return (*this);
+		}
+
+	    random_access_iterator operator--(int)
+	    {
+	        random_access_iterator res(*this);
+	        --(*this);
+	        return (res);
+	    }
+
+	    bool operator==(const random_access_iterator<value_type> &other) const	{ return (_element == other._element); }
+	    bool operator!=(const random_access_iterator<value_type> &other) const	{ return (_element != other._element); }
+	    bool operator>(const random_access_iterator<value_type> &other) const	{ return (_element > other._element); }
+	    bool operator<(const random_access_iterator<value_type> &other) const	{ return (_element < other._element); }
+	    bool operator<=(const random_access_iterator<value_type> &other) const	{ return (_element <= other._element); }
+	    bool operator>=(const random_access_iterator<value_type> &other) const	{ return (_element >= other._element); }
+
+	    random_access_iterator &operator+=(difference_type n)
+	    {
+	        _element += n;
+	        return (*this);
+	    }
+
+	    random_access_iterator &operator-=(difference_type n)
+	    {
+	        _element -= n;
+	        return (*this);
+	    }
+		
+	    random_access_iterator operator+(difference_type n) const
+		{
+			random_access_iterator ret(*this);
+			ret += n;
+			return ret;
+		}
+
+	    random_access_iterator operator-(difference_type n) const
+		{
+			random_access_iterator ret(*this);
+			ret -= n;
+			return ret;
+		}
+		
+        difference_type operator-(random_access_iterator<value_type> other) const
         {
-            random_access_iterator ret(*this);
-            ++(*this);
-            return (ret);
+            return (this->_element - other._element);
         }
 
-        random_access_iterator operator--(int)
-        {
-            random_access_iterator res(*this);
-            --(*this);
-            return (res);
-        }
+	    reference operator[](difference_type n) const { return (*(operator+(n))); }
 
-        bool operator==(const random_access_iterator& other) const	{ return (_element == other._element); }
-        bool operator!=(const random_access_iterator& other) const	{ return (_element != other._element); }
-        bool operator>(const random_access_iterator& other) const	{ return (_element > other._element); }
-        bool operator<(const random_access_iterator& other) const	{ return (_element < other._element); }
-        bool operator<=(const random_access_iterator& other) const	{ return (_element <= other._element); }
-        bool operator>=(const random_access_iterator& other) const	{ return (_element >= other._element); }
-	};
-}
+	};	// class random_access_iterator
+
+}	// namespace ft

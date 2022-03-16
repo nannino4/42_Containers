@@ -2,6 +2,7 @@
 
 #include <memory>
 #include "random_access_iterator.hpp"
+#include "reverse_random_access_iterator.hpp"
 
 namespace ft
 {
@@ -12,10 +13,11 @@ namespace ft
     template <class T, class Allocator = std::allocator<T> >
 	class Vector
 	{
-	public:
 
-		// Member types
-        
+    /* ------------------------------------------------------------- */
+    /* MEMBER TYPES
+    /* ------------------------------------------------------------- */
+	public:
 		typedef T													value_type;
 		typedef Allocator											allocator_type;
 		typedef size_t												size_type;
@@ -30,5 +32,5 @@ namespace ft
 		typedef ft::random_access_iterator<const value_type>		const_iterator;
 		typedef ft::reverse_random_access_iterator<iterator>		reverse_iterator;
 		typedef ft::reverse_random_access_iterator<const_iterator>	const_reverse_iterator;
-	}
+	};
 }
