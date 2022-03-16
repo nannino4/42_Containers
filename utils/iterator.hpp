@@ -1,0 +1,84 @@
+#pragma once
+
+namespace ft
+{
+	struct random_access_iterator_tag { };
+	struct input_iterator_tag { };
+	struct output_iterator_tag { };
+	struct forward_iterator_tag { };
+	struct bidirectional_iterator_tag{ };
+
+	/*
+	**	class iterator:
+	**		basic class used for iterator_traits, random_access_iterator, etc
+	*/
+	template<class Category, class T, class Distance = long int, class Pointer = T*, class Reference = T&>
+	class iterator
+	{
+	public:
+		typedef T					value_type;
+		typedef Distance			difference_type;
+		typedef Pointer				pointer;
+		typedef Reference			reference;
+		typedef Category			iterator_category;
+
+	};
+	
+	/*
+	**	struct iterator_traits:
+	**		determines the traits of the iterator
+	*/
+
+	template<class iterator>
+	struct iterator_traits
+	{
+		// Member types
+		typedef typename iterator::difference_type		difference_type;
+		typedef typename iterator::value_type			value_type;
+		typedef typename iterator::pointer				pointer;
+		typedef typename iterator::reference			reference;
+		typedef typename iterator::iterator_category	iterator_category;
+	
+	};
+
+	template<class T>
+	struct iterator_traits<T*>
+	{
+		// Member types
+		typedef ptrdiff_t								difference_type;
+		typedef T										value_type;
+		typedef T*										pointer;
+		typedef T&										reference;
+		typedef ft::random_access_iterator_tag			iterator_category;
+	};
+
+	template<class T>
+	struct iterator_traits<const T*>
+	{
+		// Member types
+		typedef ptrdiff_t								difference_type;
+		typedef T										value_type;
+		typedef const T*								pointer;
+		typedef const T&								reference;
+		typedef ft::random_access_iterator_tag			iterator_category;
+	};
+
+	/*
+	**	std::distance():
+	**		Returns the number of hops from first to last
+	*/
+	template<class iterator>
+	typename ft::iterator_traits<iterator>::difference_type	distance(iterator first, iterator last)
+	{
+		typename ft::iterator_traits<iterator>::difference_type count;
+
+		count = 0;
+		while (first != last)
+		{
+			first++;
+			count++;
+		}
+		return (count);
+	};
+}
+
