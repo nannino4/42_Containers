@@ -12,7 +12,7 @@ CFLAGS		= 	-Wall -Wextra -Werror
 CC			= 	g++
 
 %.o :		%.cpp
-			$(CC) -c -I. -I./utils $(CFLAGS) $< -o $@
+			$(CC) -c -I./vector -I./utils $(CFLAGS) $< -o $@
 
 all:		vector stack map
 

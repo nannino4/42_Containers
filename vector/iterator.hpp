@@ -10,7 +10,7 @@ namespace ft
 
 	/*
 	**	class iterator:
-	**		basic class used for iterator_traits, random_access_iterator, etc
+	**		basic class used for iterator_traits and random_access_iterator
 	*/
 	template<class Category, class T, class Distance = long int, class Pointer = T*, class Reference = T&>
 	class iterator
@@ -32,7 +32,6 @@ namespace ft
 	template<class iterator>
 	struct iterator_traits
 	{
-		// Member types
 		typedef typename iterator::difference_type		difference_type;
 		typedef typename iterator::value_type			value_type;
 		typedef typename iterator::pointer				pointer;
@@ -44,7 +43,6 @@ namespace ft
 	template<class T>
 	struct iterator_traits<T*>
 	{
-		// Member types
 		typedef ptrdiff_t								difference_type;
 		typedef T										value_type;
 		typedef T*										pointer;
@@ -55,30 +53,11 @@ namespace ft
 	template<class T>
 	struct iterator_traits<const T*>
 	{
-		// Member types
 		typedef ptrdiff_t								difference_type;
 		typedef T										value_type;
 		typedef const T*								pointer;
 		typedef const T&								reference;
 		typedef ft::random_access_iterator_tag			iterator_category;
-	};
-
-	/*
-	**	std::distance():
-	**		Returns the number of hops from first to last
-	*/
-	template<class iterator>
-	typename ft::iterator_traits<iterator>::difference_type	distance(iterator first, iterator last)
-	{
-		typename ft::iterator_traits<iterator>::difference_type count;
-
-		count = 0;
-		while (first != last)
-		{
-			first++;
-			count++;
-		}
-		return (count);
 	};
 }
 

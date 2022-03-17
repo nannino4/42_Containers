@@ -31,7 +31,7 @@ namespace ft
     /* ------------------------------------------------------------- */
 	public:
 		// Default constructor
-		random_access_iterator(pointer element = 0) : _element(element) {}
+		random_access_iterator() : _element(nullptr) {}
 		// Copy constructor
 		random_access_iterator(const random_access_iterator<value_type> &other) : _element(other._element) {}
 		// Assign operator
@@ -48,16 +48,23 @@ namespace ft
     /* ------------------------------------------------------------- */
     /* GETTERS
     /* ------------------------------------------------------------- */
-	public:
-		pointer getElement() const { return _element; }
+	pointer base() const { return _element; }
 
 
     /* ------------------------------------------------------------- */
     /* OPERATOR OVERLOADS
     /* ------------------------------------------------------------- */
 	public:
+	    bool operator==(const random_access_iterator<value_type> &other) const	{ return (_element == other._element); }
+	    bool operator!=(const random_access_iterator<value_type> &other) const	{ return (_element != other._element); }
+	    bool operator>(const random_access_iterator<value_type> &other) const	{ return (_element > other._element); }
+	    bool operator<(const random_access_iterator<value_type> &other) const	{ return (_element < other._element); }
+	    bool operator<=(const random_access_iterator<value_type> &other) const	{ return (_element <= other._element); }
+	    bool operator>=(const random_access_iterator<value_type> &other) const	{ return (_element >= other._element); }
+
 	    reference operator*() const { return (*_element); }
 	    pointer operator->() const { return (_element); }
+	    reference operator[](difference_type n) const { return (*(operator+(n))); }
 
 	    random_access_iterator& operator++()
 		{
@@ -85,13 +92,6 @@ namespace ft
 	        return (res);
 	    }
 
-	    bool operator==(const random_access_iterator<value_type> &other) const	{ return (_element == other._element); }
-	    bool operator!=(const random_access_iterator<value_type> &other) const	{ return (_element != other._element); }
-	    bool operator>(const random_access_iterator<value_type> &other) const	{ return (_element > other._element); }
-	    bool operator<(const random_access_iterator<value_type> &other) const	{ return (_element < other._element); }
-	    bool operator<=(const random_access_iterator<value_type> &other) const	{ return (_element <= other._element); }
-	    bool operator>=(const random_access_iterator<value_type> &other) const	{ return (_element >= other._element); }
-
 	    random_access_iterator &operator+=(difference_type n)
 	    {
 	        _element += n;
@@ -117,14 +117,59 @@ namespace ft
 			ret -= n;
 			return ret;
 		}
-		
-        difference_type operator-(random_access_iterator<value_type> other) const
-        {
-            return (this->_element - other._element);
-        }
-
-	    reference operator[](difference_type n) const { return (*(operator+(n))); }
-
+	
 	};	// class random_access_iterator
+
+
+/* ------------------------------------------------------------- */
+/* NON-MEMBER OPERATOR OVERLOADS
+/* ------------------------------------------------------------- */
+    template <typename T>
+	random_access_iterator<T>::difference_type operator-(const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs)
+    {
+        return (lhs.base() - rhs.base());
+    }
+
+    template <typename T>
+	random_access_iterator<T> operator+(const random_access_iterator<T>::difference_type n, const random_access_iterator<T> &it)
+    {
+        return (it + n);
+    }
+
+    template <typename T>
+    bool operator==(const random_access_iterator<T> lhs, const random_access_iterator<T> rhs)
+    {
+        return (lhs.base() == rhs.base());
+    }
+
+    template <typename T>
+    bool operator!=(const random_access_iterator<T> lhs, const random_access_iterator<T> rhs)
+    {
+        return (lhs.base() != rhs.base());
+    }
+
+    template <typename T>
+    bool operator>(const random_access_iterator<T> lhs, const random_access_iterator<T> rhs)
+    {
+        return (lhs.base() > rhs.base());
+    }
+
+    template <typename T>
+    bool operator>=(const random_access_iterator<T> lhs, const random_access_iterator<T> rhs)
+    {
+        return (lhs.base() >= rhs.base());
+    }
+
+    template <typename T>
+    bool operator<(const random_access_iterator<T> lhs, const random_access_iterator<T> rhs)
+    {
+        return (lhs.base() < rhs.base());
+    }
+
+    template <typename T>
+    bool operator<=(const random_access_iterator<T> lhs, const random_access_iterator<T> rhs)
+    {
+        return (lhs.base() <= rhs.base());
+    }
 
 }	// namespace ft
