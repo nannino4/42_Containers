@@ -32,6 +32,7 @@ namespace ft
 	public:
 		// Default constructor
 		random_access_iterator() : _element(nullptr) {}
+		random_access_iterator(pointer elem = nullptr) : _element(elem) {}
 		// Copy constructor
 		random_access_iterator(const random_access_iterator<value_type> &other) : _element(other._element) {}
 		// Assign operator
