@@ -3,6 +3,8 @@
 #include <memory>
 #include "random_access_iterator.hpp"
 #include "reverse_iterator.hpp"
+#include "equal.hpp"
+#include "lexicographical_compare.hpp"
 
 namespace ft
 {
@@ -345,7 +347,7 @@ namespace ft
 		//single element
 		iterator insert(iterator position, const value_type& val)
 		{
-			// In case of a realloc, position will be invalited because _vector
+			// In case of a realloc, position will be invalidated because _vector
 			// points to another allocated area so we need to save the index array
 			// where position iterator is pointing to create a new one after the reallocation
 			difference_type index = position - begin();
@@ -362,7 +364,8 @@ namespace ft
 				return ;
 			else if (n > this->max_size())
 				throw (std::length_error("Error: cannot insert: n > max_size()."));
-			// In case of a realloc, position will be invalited because _vector
+
+			// In case of a realloc, position will be invalidated because _vector
 			// points to another allocated area so we need to save the index array
 			// where position iterator is pointing to create a new one after the reallocation
 			difference_type index = position - begin();
@@ -382,13 +385,14 @@ namespace ft
 				_alloc.construct(&(*newPosition++), val);
 			_size += n;
 		}
+
 		//range
 		template <class InputIterator>
 		void insert(iterator position, InputIterator first, InputIterator last)
 		{
 			size_type n = last - first;
 
-			// In case of a realloc, position will be invalited because _vector
+			// In case of a realloc, position will be invalidated because _vector
 			// points to another allocated area so we need to save the index array
 			// where position iterator is pointing to create a new one after the reallocation
 			difference_type index = position - begin();
@@ -422,20 +426,73 @@ namespace ft
 		//range
 		iterator erase(iterator first, iterator last)
 		{
+			if (first == end() || first == last)
+				return first;
 
+			if (last < end())
+			{
+				shiftElementsToTheLeft(first, last);
+				_size -= last - first;
+			}
+			else
+			{
+				size_type newSize = _size - (last - first);
+				while (_size != newSize)
+					pop_back();
+			}
+			return first;
 		}
+
+		/*
+			ft::vector::swap()
+				Exchanges the content of the container by the content of x, which is
+					another vector object of the same type. Sizes may differ.
+		*/
+		void swap(vector &x)
+		{
+			size_type		tmpSize = _size;
+			size_type		tmpCapacity = _capacity;
+			pointer			tmpPointer = _vector;
+			allocator_type	tmpAlloc = _allocator;
+
+			_size = x.size();
+			_capacity = x.capacity();
+			_vector = x._vector;
+			_allocator = x._allocator;
+
+			x._size = tmpSize;
+			x._capacity = tmpCapacity;
+			x._vector = tmpPointer;
+			x._allocator = tmpAlloc;
+		}
+
+		/*
+			ft::vector::clear()
+				Removes all elements from the vector (which are destroyed),
+					leaving the container with a size of 0.
+		*/
+		void erase()
+		{
+			while (_size)
+				pop_back();
+		}
+
+
+    /* ------------------------------------------------------------- */
+    /* ALLOCATOR
+    /* ------------------------------------------------------------- */
+	public:
+		/*
+			ft::vector::get_allocator()
+				Returns a copy of the allocator object associated with the vector.
+		*/
+		allocator_type get_allocator() const { return _allocator; }
 
 
     /* ------------------------------------------------------------- */
     /* PRIVATE MEMBER FUNCTIONS
     /* ------------------------------------------------------------- */
 	private:
-		/*
-			reallocate(size_type newCapacity)
-				Allocates a new _vector with _capacity = newCapacity, copies the elements of the
-					old _vector in it, and destroys and deallocates the old _vector.
-				The _allocator may throw bad_alloc expections.
-		*/
 		void reallocate(size_type newCapacity)
 		{
 			pointer new_vector = _allocator.allocate(newCapacity);
@@ -448,7 +505,6 @@ namespace ft
 
 		void shiftElementsToTheRight(iterator position, size_type n)
 		{
-
 			for (iterator it = end() - 1; it >= position; --it)
 			{
 				_allocator.construct(&(*(it + n)), *it);
@@ -456,6 +512,69 @@ namespace ft
 			}
 		}
 
+		void shiftElementsToTheLeft(iterator first, iterator last)
+		{
+			difference_type n = last - first;
+			for (iterator it = first; it + n != end(); ++it)
+			{
+				_allocator.destroy(&(*it));
+				_allocator.construct(&(*it), *(it + n));
+			}
+		}
+
 	}; //class Vector
+
+
+/* ------------------------------------------------------------- */
+/* NON-MEMBER FUNCTION OVERLOADS
+/* ------------------------------------------------------------- */
+	//relational operators
+	template <class T, class Alloc>
+	bool operator==(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		if (lhs.size() != rhs.size())
+			return false;
+		return ft::equal(lhs.begin(), lhs.end(), rhs.begin());
+	}
+
+	template <class T, class Alloc>
+	bool operator!=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		if (lhs.size() != rhs.size())
+			return true;
+		return !(ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+	}
+
+	template <class T, class Alloc>
+	bool operator<(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+	}
+
+	template <class T, class Alloc>
+	bool operator<=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		return !(rhs < lhs);
+	}
+
+	template <class T, class Alloc>
+	bool operator>(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		return !(lhs <= rhs);
+	}
+
+	template <class T, class Alloc>
+	bool operator>=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		return !(lhs < rhs);
+	}
+
+	/*
+		ft::swap()
+			The contents of container x are exchanged with those of y. Both container objects
+				must be of the same type (same template parameters), although sizes may differ.
+	*/
+	template <class T, class Alloc>
+	void swap(vector<T,Alloc>& x, vector<T,Alloc>& y) { x.swap(y) }
 
 } //namespace ft
