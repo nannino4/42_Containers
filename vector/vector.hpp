@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include "iterator.hpp"
 #include "random_access_iterator.hpp"
 #include "reverse_iterator.hpp"
 #include "equal.hpp"
@@ -50,22 +51,22 @@ namespace ft
 			Default constructor
 			Constructs an empty container with no elements
 		*/
-		explicit vector (const allocator_type& alloc = allocator_type()) : _allocator(alloc), _vector(nullptr), _size(0), _capacity(0) {}
+		explicit vector(const allocator_type& alloc = allocator_type()) : _allocator(alloc), _vector(nullptr), _size(0), _capacity(0) {}
 
 		/*
 			Fill constructor
 			Constructs a container with n elements. Each element is a copy of val.
 		*/
-		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
+		explicit vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
 		{
 			_allocator = alloc;
 			_vector = _allocator.allocate(_capacity);
 			_size = n;
 			_capacity = n;
 
-			for ( iterator i = _vector; i < _vector + size; i++)
+			for ( iterator i = _vector; i < _vector + _size; i++)
 			{
-				_allocator.construct(i, val);
+				_allocator.construct(&(*i), val);
 			}
 		}
 
@@ -73,23 +74,36 @@ namespace ft
 			Range constructor
 			Constructs a container with as many elements as the range [first, last).
 		*/
-		template <class InputIterator>
-		vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type())
+		vector(iterator first, iterator last, const allocator_type& alloc = allocator_type())
 		{
 			_allocator = alloc;
-			_size = std::distance<InputIterator>(first, last);
+			_size = ft::distance<iterator>(first, last);
 			_capacity = _size;
 			_vector = _allocator.allocate(_capacity);
 
-			for (iterator i = _vector; i < _vector + size; i++)
+			for (iterator i = _vector; i < _vector + _size; i++)
 			{
-				_allocator.construct(i, *first);
+				_allocator.construct(&(*i), *first);
+				++first;
+			}
+		}
+
+		vector(const_iterator first, const_iterator last, const allocator_type& alloc = allocator_type())
+		{
+			_allocator = alloc;
+			_size = ft::distance<const_iterator>(first, last);
+			_capacity = _size;
+			_vector = _allocator.allocate(_capacity);
+
+			for (iterator i = _vector; i < _vector + _size; i++)
+			{
+				_allocator.construct(&(*i), *first);
 				++first;
 			}
 		}
 
 		//copy constructor
-		vector (const vector& other)
+		vector(const vector& other)
 		{
 			vector();
 			*this = other;
@@ -130,16 +144,16 @@ namespace ft
 				It does not point to any element, and thus shall not be dereferenced.
 				If empty, returns the same as vector::begin().
 		*/
-		iterator end() { return iterator(_vector + size); }
-		const_iterator end() const { return const_iterator(_vector + size); }
+		iterator end() { return iterator(_vector + _size); }
+		const_iterator end() const { return const_iterator(_vector + _size); }
 
 		/*
 			ft::vector::rbegin()
 				Returns a reverse iterator to the last element of the vector.
 				If empty, should not be dereferenced.	
 		*/
-		reverse_iterator rbegin() { return reverse_iterator(_vector + size - 1); }
-		const_reverse_iterator rbegin() const { return const_reverse_iterator(_vector + size - 1); }
+		reverse_iterator rbegin() { return reverse_iterator(_vector + _size - 1); }
+		const_reverse_iterator rbegin() const { return const_reverse_iterator(_vector + _size - 1); }
 
 		/*
 			ft::vector::rend()
@@ -282,8 +296,7 @@ namespace ft
 					and modifying its size accordingly.
 		*/
 		//range
-		template <class InputIterator>
-		void assign(InputIterator first, InputIterator last)
+		void assign(iterator first, iterator last)
 		{
 			clear();
 			
@@ -294,7 +307,7 @@ namespace ft
 				_vector = _allocator.allocate(newSize);
 				_capacity = newSize;
 			}
-			for (size_type i; first != last; ++i, ++first)
+			for (size_type i = 0; first != last; ++i, ++first)
 				_allocator.construct(&_vector[i], *first);
 			_size = newSize;
 		}
@@ -310,7 +323,7 @@ namespace ft
 				_vector = _allocator.allocate(n);
 				_capacity = n;
 			}
-			for (size_type i; i < n; ++i)
+			for (size_type i = 0; i < n; ++i)
 				_allocator.construct(&_vector[n], val);
 			_size = n;
 		}
@@ -389,8 +402,7 @@ namespace ft
 		}
 
 		//range
-		template <class InputIterator>
-		void insert(iterator position, InputIterator first, InputIterator last)
+		void insert(iterator position, iterator first, iterator last)
 		{
 			size_type n = last - first;
 

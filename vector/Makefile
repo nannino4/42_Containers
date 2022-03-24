@@ -1,4 +1,6 @@
 
+NAME		=	vector
+
 SRCS		= 	main.cpp
 OBJS		= 	$(SRCS:.cpp=.o)
 
@@ -8,10 +10,10 @@ CC			= 	g++
 %.o :		%.cpp
 			$(CC) -c -I../utils $(CFLAGS) $< -o $@
 
-all:		vector
+all:		$(NAME)
 
-vector:	$(OBJS)
-			$(CC) $(OBJS) -o vector
+$(NAME):	$(OBJS)
+			$(CC) $(OBJS) -o $(NAME)
 
 clean:
 			rm -f $(OBJS)
@@ -21,4 +23,4 @@ fclean:		clean
 
 re:			fclean all
 
-.PHONY:		all clean fclean re vector
+.PHONY:		all clean fclean re $(NAME)

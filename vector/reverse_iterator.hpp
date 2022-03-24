@@ -55,7 +55,7 @@ namespace ft
     //GETTERS
     //------------------------------------------------------------- */
 	public:
-		pointer			getElement() const { return (_baseIterator._baseIterator - 1); }
+		pointer			getElement() const { return (_baseIterator.base() - 1); }
 		iterator_type	base() const { return _baseIterator; }
 
 
@@ -63,7 +63,7 @@ namespace ft
     //OPERATOR OVELOADS
     //------------------------------------------------------------- */
 	public:
-		reference	operator*() const { return (*(_baseIterator._baseIterator - 1)); }
+		reference	operator*() const { return (*(_baseIterator.base() - 1)); }
         pointer		operator->() const { return &(operator*()); }
 		reference operator[](difference_type n) const { return _baseIterator[-n - 1]; }
 
