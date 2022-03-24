@@ -12,9 +12,9 @@ namespace ft
 	class vector
 	{
 
-    /* ------------------------------------------------------------- */
-    /* MEMBER TYPES
-    /* ------------------------------------------------------------- */
+    //------------------------------------------------------------- */
+    //MEMBER TYPES
+    //------------------------------------------------------------- */
 	public:
 		typedef T													value_type;
 		typedef Allocator											allocator_type;
@@ -32,9 +32,9 @@ namespace ft
 		typedef ft::reverse_iterator<const_iterator>				const_reverse_iterator;
 
 
-    /* ------------------------------------------------------------- */
-    /* ATTRIBUTES
-    /* ------------------------------------------------------------- */
+    //------------------------------------------------------------- */
+    //ATTRIBUTES
+    //------------------------------------------------------------- */
 	private:
 		allocator_type	_allocator;
 		pointer			_vector;
@@ -42,15 +42,15 @@ namespace ft
 		size_type		_capacity;
 
 
-    /* ------------------------------------------------------------- */
-    /* COPLIEN FORM
-    /* ------------------------------------------------------------- */
+    //------------------------------------------------------------- */
+    //COPLIEN FORM
+    //------------------------------------------------------------- */
 	public:
 		/*
 			Default constructor
 			Constructs an empty container with no elements
 		*/
-		explicit vector (const allocator_type& alloc = allocator_type()) : _allocator(alloc), _vector(nullptr), _capacity(0), _size(0) {}
+		explicit vector (const allocator_type& alloc = allocator_type()) : _allocator(alloc), _vector(nullptr), _size(0), _capacity(0) {}
 
 		/*
 			Fill constructor
@@ -81,7 +81,7 @@ namespace ft
 			_capacity = _size;
 			_vector = _allocator.allocate(_capacity);
 
-			while (iterator i = _vector; i < vector + size; i++)
+			for (iterator i = _vector; i < _vector + size; i++)
 			{
 				_allocator.construct(i, *first);
 				++first;
@@ -89,30 +89,32 @@ namespace ft
 		}
 
 		//copy constructor
-		//TODO
-		vector (const vector& other);
+		vector (const vector& other)
+		{
+			vector();
+			*this = other;
+		}
 
 		//desctructor
 		~vector()
 		{
-			for (iterator i = begin(); i < end(); i++)
-			{
-				_allocator.destroy(&(*i));
-			}
+			clear();
 			_allocator.deallocate(_vector, _capacity);
-			_vector = nullptr;
-			_size = 0;
-			_capacity = 0;
 		}
 
 		//assign operator
-		//TODO
-		vector& operator=(const vector& other);
+		vector& operator=(const vector& other)
+		{
+			vector tmp = other;
+
+			swap(tmp);
+			return *this;
+		}
 
 
-    /* ------------------------------------------------------------- */
-    /* ITERATORS
-    /* ------------------------------------------------------------- */
+    //------------------------------------------------------------- */
+    //ITERATORS
+    //------------------------------------------------------------- */
 	public:
 		/*
 			ft::vector::begin()
@@ -129,7 +131,7 @@ namespace ft
 				If empty, returns the same as vector::begin().
 		*/
 		iterator end() { return iterator(_vector + size); }
-		const_iterator end const () { return const_iterator(_vector + size); }
+		const_iterator end() const { return const_iterator(_vector + size); }
 
 		/*
 			ft::vector::rbegin()
@@ -149,9 +151,9 @@ namespace ft
 		const_reverse_iterator rend() const { return const_reverse_iterator(_vector - 1); }
 	
 
-    /* ------------------------------------------------------------- */
-    /* CAPACITY
-    /* ------------------------------------------------------------- */
+    //------------------------------------------------------------- */
+    //CAPACITY
+    //------------------------------------------------------------- */
 	public:
 		/*
 			ft::vector::size()
@@ -221,9 +223,9 @@ namespace ft
 		}
 
 
-    /* ------------------------------------------------------------- */
-    /* ELEMENT ACCESS
-    /* ------------------------------------------------------------- */
+    //------------------------------------------------------------- */
+    //ELEMENT ACCESS
+    //------------------------------------------------------------- */
 	public:
 		/*
 			ft::vector::operator[]
@@ -270,9 +272,9 @@ namespace ft
 		const_reference back() const {return _vector[_size - 1]; }
 
 
-    /* ------------------------------------------------------------- */
-    /* MODIFIERS
-    /* ------------------------------------------------------------- */
+    //------------------------------------------------------------- */
+    //MODIFIERS
+    //------------------------------------------------------------- */
 	public:
 		/*
 			ft::vector::assign()
@@ -324,7 +326,7 @@ namespace ft
 		void push_back(const value_type& val)
 		{
 			if (_size + 1 > _capacity)
-				reallocateVec(!_capacity ? 1 : _capacity * 2);
+				reallocate(!_capacity ? 1 : _capacity * 2);
 			_allocator.construct(&_vector[_size++], val);
 		}
 
@@ -382,7 +384,7 @@ namespace ft
 
 			// Constructing n new elements from val
 			for (size_type i = 0; i < n; ++i)
-				_alloc.construct(&(*newPosition++), val);
+				_allocator.construct(&(*newPosition++), val);
 			_size += n;
 		}
 
@@ -409,7 +411,7 @@ namespace ft
 
 			// Constructing n new elements from range
 			for (size_type i = 0; i < n; ++i)
-				_alloc.construct(&(*newPosition++), *first++);
+				_allocator.construct(&(*newPosition++), *first++);
 			_size += n;
 		}
 
@@ -471,16 +473,16 @@ namespace ft
 				Removes all elements from the vector (which are destroyed),
 					leaving the container with a size of 0.
 		*/
-		void erase()
+		void clear()
 		{
 			while (_size)
 				pop_back();
 		}
 
 
-    /* ------------------------------------------------------------- */
-    /* ALLOCATOR
-    /* ------------------------------------------------------------- */
+    //------------------------------------------------------------- */
+    //ALLOCATOR
+    //------------------------------------------------------------- */
 	public:
 		/*
 			ft::vector::get_allocator()
@@ -489,15 +491,15 @@ namespace ft
 		allocator_type get_allocator() const { return _allocator; }
 
 
-    /* ------------------------------------------------------------- */
-    /* PRIVATE MEMBER FUNCTIONS
-    /* ------------------------------------------------------------- */
+    //------------------------------------------------------------- */
+    //PRIVATE MEMBER FUNCTIONS
+    //------------------------------------------------------------- */
 	private:
 		void reallocate(size_type newCapacity)
 		{
 			pointer new_vector = _allocator.allocate(newCapacity);
 			for (size_type i = 0; i < _size; i++)
-				new_vector[i] = _allocator.construct(&new_vector[i], _vector[i]);
+				_allocator.construct(&new_vector[i], _vector[i]);
 			this->~vector();
 			_capacity = newCapacity;
 			_vector = new_vector;
@@ -525,9 +527,9 @@ namespace ft
 	}; //class Vector
 
 
-/* ------------------------------------------------------------- */
-/* NON-MEMBER FUNCTION OVERLOADS
-/* ------------------------------------------------------------- */
+//------------------------------------------------------------- */
+//NON-MEMBER FUNCTION OVERLOADS
+//------------------------------------------------------------- */
 	//relational operators
 	template <class T, class Alloc>
 	bool operator==(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
@@ -575,6 +577,6 @@ namespace ft
 				must be of the same type (same template parameters), although sizes may differ.
 	*/
 	template <class T, class Alloc>
-	void swap(vector<T,Alloc>& x, vector<T,Alloc>& y) { x.swap(y) }
+	void swap(vector<T,Alloc>& x, vector<T,Alloc>& y) { x.swap(y); }
 
 } //namespace ft

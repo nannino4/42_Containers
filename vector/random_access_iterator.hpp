@@ -8,9 +8,9 @@ namespace ft
 	class random_access_iterator : ft::iterator<ft::random_access_iterator_tag, T>
 	{
 
-    /* ------------------------------------------------------------- */
-    /* MEMBER TYPES
-    /* ------------------------------------------------------------- */
+    //------------------------------------------------------------- */
+    //MEMBER TYPES
+    //------------------------------------------------------------- */
 	public:
 		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::value_type		value_type;
 		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::difference_type	difference_type;
@@ -19,19 +19,18 @@ namespace ft
 		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::iterator_category	iterator_category;
 
 
-    /* ------------------------------------------------------------- */
-    /* ATTRIBUTES
-    /* ------------------------------------------------------------- */
+    //------------------------------------------------------------- */
+    //ATTRIBUTES
+    //------------------------------------------------------------- */
 	private:
         pointer _element;
 
 
-    /* ------------------------------------------------------------- */
-    /* COPLIEN FORM
-    /* ------------------------------------------------------------- */
+    //------------------------------------------------------------- */
+    //COPLIEN FORM
+    //------------------------------------------------------------- */
 	public:
 		// Default constructor
-		random_access_iterator() : _element(nullptr) {}
 		random_access_iterator(pointer elem = nullptr) : _element(elem) {}
 		// Copy constructor
 		random_access_iterator(const random_access_iterator<value_type> &other) : _element(other._element) {}
@@ -46,15 +45,15 @@ namespace ft
 		~random_access_iterator() {}
 
 
-    /* ------------------------------------------------------------- */
-    /* GETTERS
-    /* ------------------------------------------------------------- */
+    //------------------------------------------------------------- */
+    //GETTERS
+    //------------------------------------------------------------- */
 	pointer base() const { return _element; }
 
 
-    /* ------------------------------------------------------------- */
-    /* OPERATOR OVERLOADS
-    /* ------------------------------------------------------------- */
+    //------------------------------------------------------------- */
+    //OPERATOR OVERLOADS
+    //------------------------------------------------------------- */
 	public:
 	    bool operator==(const random_access_iterator<value_type> &other) const	{ return (_element == other._element); }
 	    bool operator!=(const random_access_iterator<value_type> &other) const	{ return (_element != other._element); }
@@ -122,17 +121,17 @@ namespace ft
 	};	// class random_access_iterator
 
 
-/* ------------------------------------------------------------- */
-/* NON-MEMBER OPERATOR OVERLOADS
-/* ------------------------------------------------------------- */
+//------------------------------------------------------------- */
+//NON-MEMBER OPERATOR OVERLOADS
+//------------------------------------------------------------- */
     template <typename T>
-	random_access_iterator<T>::difference_type operator-(const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs)
+	typename random_access_iterator<T>::difference_type operator-(const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs)
     {
         return (lhs.base() - rhs.base());
     }
 
     template <typename T>
-	random_access_iterator<T> operator+(const random_access_iterator<T>::difference_type n, const random_access_iterator<T> &it)
+	random_access_iterator<T> operator+(const typename random_access_iterator<T>::difference_type n, const random_access_iterator<T> &it)
     {
         return (it + n);
     }
