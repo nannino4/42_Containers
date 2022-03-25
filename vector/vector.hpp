@@ -60,9 +60,9 @@ namespace ft
 		explicit vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
 		{
 			_allocator = alloc;
-			_vector = _allocator.allocate(_capacity);
 			_size = n;
 			_capacity = n;
+			_vector = _allocator.allocate(_capacity);
 
 			for ( iterator i = _vector; i < _vector + _size; i++)
 			{
@@ -109,7 +109,7 @@ namespace ft
 			*this = other;
 		}
 
-		//desctructor
+		//destructor
 		~vector()
 		{
 			clear();
@@ -119,9 +119,18 @@ namespace ft
 		//assign operator
 		vector& operator=(const vector& other)
 		{
-			vector tmp = other;
-
-			swap(tmp);
+			if (this != &other)
+			{
+				this->~vector();
+				_allocator = other.get_allocator();
+				_size = other.size();
+				_capacity = other.capacity();
+				_vector = _allocator.allocate(_capacity);
+				for (size_type i = 0; i < other.size(); ++i)
+				{
+					_allocator.construct(&_vector[i], other[i]);
+				}
+			}
 			return *this;
 		}
 
@@ -324,7 +333,7 @@ namespace ft
 				_capacity = n;
 			}
 			for (size_type i = 0; i < n; ++i)
-				_allocator.construct(&_vector[n], val);
+				_allocator.construct(&_vector[i], val);
 			_size = n;
 		}
 
@@ -509,10 +518,12 @@ namespace ft
 	private:
 		void reallocate(size_type newCapacity)
 		{
+			size_type oldSize = _size;
 			pointer new_vector = _allocator.allocate(newCapacity);
 			for (size_type i = 0; i < _size; i++)
 				_allocator.construct(&new_vector[i], _vector[i]);
 			this->~vector();
+			_size = oldSize;
 			_capacity = newCapacity;
 			_vector = new_vector;
 		}

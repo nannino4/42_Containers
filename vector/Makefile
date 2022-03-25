@@ -1,10 +1,10 @@
 
-NAME		=	vector
+NAME		=	main
 
 SRCS		= 	main.cpp
 OBJS		= 	$(SRCS:.cpp=.o)
 
-CFLAGS		= 	-Wall -Wextra -Werror
+CFLAGS		= 	-Wall -Wextra -Werror -g
 CC			= 	g++
 
 %.o :		%.cpp
