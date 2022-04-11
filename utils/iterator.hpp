@@ -66,12 +66,14 @@ namespace ft
 		typename ft::iterator_traits<InputIt>::difference_type count;
 
 		count = 0;
-		while (first != last)
+		while (first && last && first != last)
 		{
 			first++;
 			count++;
 		}
-		return (count);
+		if (first && last)
+			return (count);
+		return (-1);
 	};
 }
 

@@ -5,19 +5,8 @@
 namespace ft
 {
 	template <typename T>
-	class random_access_iterator : ft::iterator<ft::random_access_iterator_tag, T>
+	class random_access_iterator : iterator<random_access_iterator_tag, T>
 	{
-
-    //------------------------------------------------------------- */
-    //MEMBER TYPES
-    //------------------------------------------------------------- */
-	public:
-		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::value_type		value_type;
-		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::difference_type	difference_type;
-		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::pointer			pointer;
-		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::reference			reference;
-		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::iterator_category	iterator_category;
-
 
     //------------------------------------------------------------- */
     //ATTRIBUTES
@@ -46,22 +35,9 @@ namespace ft
 
 
     //------------------------------------------------------------- */
-    //GETTERS
-    //------------------------------------------------------------- */
-	pointer base() const { return _element; }
-
-
-    //------------------------------------------------------------- */
     //OPERATOR OVERLOADS
     //------------------------------------------------------------- */
 	public:
-	    bool operator==(const random_access_iterator<value_type> &other) const	{ return (_element == other._element); }
-	    bool operator!=(const random_access_iterator<value_type> &other) const	{ return (_element != other._element); }
-	    bool operator>(const random_access_iterator<value_type> &other) const	{ return (_element > other._element); }
-	    bool operator<(const random_access_iterator<value_type> &other) const	{ return (_element < other._element); }
-	    bool operator<=(const random_access_iterator<value_type> &other) const	{ return (_element <= other._element); }
-	    bool operator>=(const random_access_iterator<value_type> &other) const	{ return (_element >= other._element); }
-
 	    reference operator*() const { return (*_element); }
 	    pointer operator->() const { return (_element); }
 	    reference operator[](difference_type n) const { return (*(operator+(n))); }

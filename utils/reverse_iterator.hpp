@@ -2,6 +2,7 @@
 
 #include "iterator.hpp"
 #include "random_access_iterator.hpp"
+#include "bidirectional_iterator.hpp"
 
 namespace ft
 {
@@ -10,7 +11,7 @@ namespace ft
 	{
 
     //------------------------------------------------------------- */
-    //MEMBER TYPES
+    // MEMBER TYPES
     //------------------------------------------------------------- */
 	public:
 		typedef iterator													iterator_type;
@@ -22,29 +23,27 @@ namespace ft
 
 
     //------------------------------------------------------------- */
-    //ATTRIBUTES
+    // ATTRIBUTES
     //------------------------------------------------------------- */
 	private:
 		iterator_type	_baseIterator;
 
 
     //------------------------------------------------------------- */
-    //COPLIEN FORM
+    // COPLIEN FORM
     //------------------------------------------------------------- */
 	public:
 		// Default constructor
-		reverse_iterator(pointer element = 0) : _baseIterator(element + 1) {}
-		// Copy constructor
-		reverse_iterator(const reverse_iterator<iterator_type> &other) : _baseIterator(other._baseIterator) {}
+		reverse_iterator() : _baseIterator() {}
 		// Convert constructor
-		reverse_iterator(const iterator_type &other) : _baseIterator(other) {}
+		explicit reverse_iterator(iterator_type other) : _baseIterator(other) {}
+		// Copy constructor
+		reverse_iterator(const reverse_iterator &other) { *this = other; }
 		// Assign operator
-	    reverse_iterator& operator=(const reverse_iterator<iterator_type> &other)
+	    reverse_iterator &operator=(const reverse_iterator &other)
 	    {
 	        if (this != &other)
-			{
 				this->_baseIterator = other._baseIterator;
-			}
 	        return (*this);
 	    }
 		// Destructor
@@ -52,20 +51,19 @@ namespace ft
 
 
     //------------------------------------------------------------- */
-    //GETTERS
+    // GETTERS
     //------------------------------------------------------------- */
 	public:
-		pointer			getElement() const { return (_baseIterator.base() - 1); }
 		iterator_type	base() const { return _baseIterator; }
 
 
     //------------------------------------------------------------- */
-    //OPERATOR OVELOADS
+    // OPERATOR OVELOADS
     //------------------------------------------------------------- */
 	public:
-		reference	operator*() const { return (*(_baseIterator.base() - 1)); }
+		reference	operator*() const { return (*(_baseIterator - 1)); }
         pointer		operator->() const { return &(operator*()); }
-		reference operator[](difference_type n) const { return _baseIterator[-n - 1]; }
+		reference	operator[](difference_type n) const { return _baseIterator[-n - 1]; }
 
 		reverse_iterator	&operator++() {
 
@@ -113,7 +111,7 @@ namespace ft
 		{
 			reverse_iterator ret(_baseIterator + n);
 			return ret;
-		}		
+		}
 
 	};	// class reverse_iterator
 
