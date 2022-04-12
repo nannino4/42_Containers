@@ -12,7 +12,7 @@ namespace ft
     // ATTRIBUTES
     //------------------------------------------------------------- */
 	private:
-        Node	*_element;
+        Node	*_node;
         Node	*_root;
 
 
@@ -20,19 +20,23 @@ namespace ft
     // COPLIEN FORM
     //------------------------------------------------------------- */
 	public:
-        bidirectional_iterator(Node *element = nullptr, Node *root = nullptr) : 
-			_element(element), _root(root) {}
+		// default constructor
+        bidirectional_iterator(Node *node = nullptr, Node *root = nullptr) : 
+			_node(node), _root(root) {}
 
+		// copy constructor
 		bidirectional_iterator(bidirectional_iterator const &other) :
-			_element(other.getElement()), _root(other.getRoot())) {}
+			_node(other.getNode()), _root(other.getRoot())) {}
 
+		// destructor
 		~bidirectional_iterator() {}
 
+		// assign operator
 		bidirectional_iterator &operator=(bidirectional_iterator const &other)
 		{
 			if (this != &other)
 			{
-				_element = other.getElement();
+				_node = other.getNode();
 				_root = other.getRoot();
 			}
 			return (*this);
@@ -43,7 +47,8 @@ namespace ft
     // GETTERS
     //------------------------------------------------------------- */
 	public:
-		Node 	*getElement() { return _element; }
+		Node 	*getNode() { return _node; }
+		Node 	*getValue() { return _node->value; }
 		Node 	*getRoot() { return _root; }
 
 
@@ -51,11 +56,11 @@ namespace ft
     // OPERATOR OVERLOADS
     //------------------------------------------------------------- */
 	public:
-		bool operator==(bidirectional_iterator const &other) const { return _element == other.getElement(); }
-		bool operator!=(bidirectional_iterator const &other) const { return _element != other.getElement(); }
+		bool operator==(bidirectional_iterator const &other) const { return _node == other.getNode(); }
+		bool operator!=(bidirectional_iterator const &other) const { return _node != other.getNode(); }
 
-		reference	operator*() const { return _element->value; } 
-		pointer		operator->() const { return &(_element->value); }
+		reference	operator*() const { return _node->value; } 
+		pointer		operator->() const { return &(_node->value); }
 
 		bidirectional_iterator	operator++()
 		{
