@@ -143,6 +143,17 @@ namespace ft
     //------------------------------------------------------------- */
     // MODIFIERS
     //------------------------------------------------------------- */
+	public:
+		pair<iterator,bool> insert(const value_type &val)
+		{
+			if (find(val.first) != end())
+				return pair<find(val.first), false>;
+			else
+			{
+				iterator it = upper_bound(val.first);
+				//TODO insert
+			}
+		}
 
     //------------------------------------------------------------- */
     // OBSERVERS
@@ -266,6 +277,22 @@ namespace ft
 					node = node->right;
 			}
 			return (ret);
+		}
+
+		pair<iterator,iterator> equal_range(const key_type &key) const
+		{
+			pair<iterator,iterator> ret;
+
+			ret.first = lower_bound(key);
+			ret.second = upper_bound(key);
+		}
+
+		pair<iterator,iterator> equal_range(const key_type &key) const
+		{
+			pair<iterator,iterator> ret;
+
+			ret.first = lower_bound(key);
+			ret.second = upper_bound(key);
 		}
 
     //------------------------------------------------------------- */
