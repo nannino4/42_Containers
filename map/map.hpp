@@ -6,8 +6,13 @@
 #include "bidirectional_iterator.hpp"
 #include "reverse_iterator.hpp"
 
-#define BLACK 0
-#define RED 1
+#define BLACK		0
+#define RED			1
+#define LEFT		0
+#define RIGHT		1
+#define left		child[LEFT]
+#define right		child[RIGHT]
+#define childDir(N) ( N == (N->parent)->right ? RIGHT : LEFT )
 
 namespace ft
 {
@@ -32,7 +37,7 @@ namespace ft
 			friend class map;
 		protected:
 			key_compare comp;
-			value_compare(key_compare c) : comp(c) {}
+			value_compare(key_compare c = key_compare()) : comp(c) {}
 		public:
 			typedef bool result_type;
 			typedef value_type first_argument_type;
@@ -55,8 +60,7 @@ namespace ft
 		{
 			value_type	value;
 			Node		*parent;
-			Node		*right;
-			Node		*left;
+			Node		*child[2];
 			bool		color;
 		}
 
@@ -121,7 +125,7 @@ namespace ft
 	public:
 		bool		empty() const { return !_size; }
 		size_type	size() const { return _size; }
-		size_type	max_size() const { return }
+		size_type	max_size() const { return allocNode.max_size(); }
 
     //------------------------------------------------------------- */
     // ELEMENT ACCESS
@@ -146,13 +150,46 @@ namespace ft
 	public:
 		pair<iterator,bool> insert(const value_type &val)
 		{
+			// check if val already exists
 			if (find(val.first) != end())
 				return pair<find(val.first), false>;
-			else
+
+			// create new node n
+			++_size;
+			Node *n = _allocNode.allocate(1);
+			n->value = val;
+			n->color = RED;
+			n->left = nullptr;
+			n->right = nullptr;
+			n->parent = nullptr;
+
+			// find parent node p
+			Node *p = _root;
+			Node *tmp = _root;
+			while (tmp)
 			{
-				iterator it = upper_bound(val.first);
-				//TODO insert
+				p = tmp;
+				if (value_comp()(tmp->val, n->val))
+					tmp = tmp->right;
+				else
+					tmp = tmp->left;
 			}
+
+			// insert n
+			n->parent = p;
+			if (p)
+			{
+				if (value_comp()(p->value, n->value))
+					p->right = n;
+				else
+					p->left = n;
+			}
+
+			// rebalance
+			rebalance(n);
+
+			// return
+			return (make_pair(find(val.first), true));
 		}
 
     //------------------------------------------------------------- */
@@ -161,7 +198,6 @@ namespace ft
 	public:
 		key_compare		key_comp() const { return _compare; }
 		valye_compare	value_comp() const { return value_compare(_compare); }
-		size_type		max_size() const { return allocNode.max_size(); }
 
     //------------------------------------------------------------- */
     // OPERATIONS
@@ -307,6 +343,65 @@ namespace ft
     //------------------------------------------------------------- */
 	private:
 		bool areKeysEqual(key_type lhs, key_type rhs) { return (!_compare(lhs, rhs) && !_compare(rhs, lhs)); }
+
+		Node *rotate(Node *p, Node *n)
+		{
+			Node *g = p->parent;
+			bool dir = childDir(n);
+
+			p->child[dir] = n->child[1 - dir];
+			if (p->child[dir])
+				(p->child[dir])->parent = p;
+			if (g)
+				g->child[childDir(p)] = n;
+			else
+				_root = n;
+			n->parent = g;
+			n->child[1 - dir] = p;
+			p->parent = n;
+		}
+
+		void  rebalance(Node *n)
+		{
+			Node *p = n->parent;
+			if (!p)
+				return rebalanceCase3(n);
+			if (p->color == BLACK)
+				return rebalanceCase1();
+			// from now on P is RED
+			Node *g = p->parent;
+			if (!g)
+				return rebalanceCase4(p);			// p is RED and _root
+			// p is RED and g exists
+			Node *u = g->child[1 - childDir(p)];	// u = uncle of n
+			if (!u || u->color == BLACK)
+				return rebalanceCase56(n, p, g, u);	// p RED and u BLACK
+			return rebalanceCase2(n, p, g, u);		// p and u RED
+		}
+
+		void rebalanceCase1()
+		{
+			return ;
+		}
+
+		void rebalanceCase2(Node *n, Node *p, Node *g, Node *u)
+		{
+			// p and u RED (g BLACK)
+			p->color = BLACK;
+			u->color = BLACK;
+			g->color = RED;
+			rebalance(n);
+		}
+
+		void rebalanceCase3(Node *n)
+		{
+			_root = n;
+		}
+
+		void rebalanceCase4(Node *p)
+		{
+			p->color = BLACK;
+		}
 
 	// 	Node *max(Node *node)
 	// 	{
