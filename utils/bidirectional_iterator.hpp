@@ -64,10 +64,7 @@ namespace ft
 
 		bidirectional_iterator	operator++()
 		{
-			if (!_node || _node == max(_root))
-				_node = nullptr;
-			else
-				_node = successor(_node);
+			_node = successor(_node);
 			return (*this);
 		}
 
@@ -80,10 +77,7 @@ namespace ft
 
 		bidirectional_iterator	operator--()
 		{
-			if (!_node || _node == min(_root))
-				_node = nullptr;
-			else
-				_node = predecessor(_node);
+			_node = predecessor(_node);
 			return (*this);
 		}
 

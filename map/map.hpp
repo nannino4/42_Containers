@@ -82,25 +82,36 @@ namespace ft
 		// default constructor = empty
 		explicit map(const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type())
 		{
-			//TODO
+			_root = nullptr;
+			_size = 0;
+			_compare = comp;
+			_allocPair = alloc;
 		}
 
 		// range constructor
 		template <class InputIterator>
 		map(InputIterator first, InputIterator last, const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type())
 		{
-			//TODO
+			_root = nullptr;
+			_size = 0;
+			_compare = comp;
+			_allocPair = alloc;
+			insert(first, last);
 		}
 
 		// copy constructor
 		map(const map &other) { *this = other; }
+
+		// destructor
+		~map() { clear(); }
 
 		// assign operator
 		map &operator=(const map &other)
 		{
 			if (this != &other)
 			{
-				//TODO
+				clear();
+				insert(other.begin(), other.end());
 			}
 		}
 
@@ -132,14 +143,13 @@ namespace ft
 	public:
 		mapped_type &operator[](const key_type &key)
 		{
-			iterator *it = find(key);
+			iterator it = find(key);
 			if (it.getNode())
-				return (it.getValue().second);
+				return (it->second);
 			else
 			{
 				value_type value = make_pair<key_type, mapped_type>(k, mapped_type());
-				//TODO
-				// return (insert(value)->value.second);
+				return (insert(value).first)->second;
 			}
 		}
 
@@ -230,6 +240,7 @@ namespace ft
 				insert(*InputIterator);
 		}
 
+		// erase single
 		void erase(iterator position)
 		{
 			Node *N = position.getNode();
@@ -237,27 +248,23 @@ namespace ft
 			// N is _root && has NO child
 			if (N == _root && !N->left && !N->right)
 			{
-				_allocNode.destroy(N);
 				_allocNode.deallocate(N, 1);
 				_root = nullptr;
 				return ;
 			}
 
-			// N has 2 children
-			if (N->left && N->right)
+			if (N->left && N->right)	// N has 2 children
 				swapNodes(N, (position - 1).getNode());
 
 			// from now on N has at most 1 child
 
-			if (N->color == RED)	// N is RED && has 0 children
+			if (N->color == RED)		// N is RED && has 0 children
 			{
-				if (N != _root)
-					N->parent->child[childDir(N)] = nullptr;
-				_allocNode.destroy(N);
+				N->parent->child[childDir(N)] = nullptr;
 				_allocNode.deallocate(N, 1);
 				return ;
 			}
-			else					// N is BLACK && has at most 1 RED child
+			else						// N is BLACK && has at most 1 RED child
 			{
 				if (N->left)				// N has 1 child (left)
 				{
@@ -265,7 +272,6 @@ namespace ft
 						N->parent->child[childDir(N)] = N->left;
 					N->left->parent = N->parent;
 					N->left->color = BLACK;
-					_allocNode.destroy(N);
 					_allocNode.deallocate(N, 1);
 					return ;
 				}
@@ -275,16 +281,91 @@ namespace ft
 						N->parent->child[childDir(N)] = N->right;
 					N->right->parent = N->parent;
 					N->right->color = BLACK;
-					_allocNode.destroy(N);
 					_allocNode.deallocate(N, 1);
 					return ;
 				}
 				else						// N has NO child
 				{
-					// TODO
+					Node *P = N->parent;	// parent
+					Node *S;				// sibling
+					Node *C;				// close   nephew
+					Node *D;				// distant nephew
+					bool dir = childDir(N);
+
+					// erase N
+					P->child[dir] = nullptr;
+					_allocNode.deallocate(N, 1);
+
+					while (P)
+					{
+						S = P->child[1 - dir];
+						D = S->child[1 - dir]
+						C = S->child[dir];
+						if (S->color = RED)
+							return eraseCase3(P, S, C, D, dir);		// S is RED => P+C+D BLACK
+
+						// S is BLACK
+
+						if (D && D->color == RED)
+							return eraseCase6(P, S, D)				// D is RED && S is BLACK
+						if (C && C->color == RED)
+							return eraseCase5(P, S, C, D)			// C is RED && S+D BLACK
+
+						// both nephews are NULL or BLACK
+
+						if (P->color == RED)
+							return eraseCase4(P, S)					// P is RED && C+S+D BLACK
+
+						// Case1:
+						// P+C+S+D BLACK
+						S->color = RED;
+						N = P;
+						P = N->parent;
+						if (P)
+							dir = childDir(N);
+					}
+					// N is _root, the tree is rebalanced
 				}
 			}
 		}
+
+		// erase specific key
+		size_type erase(const key_type &key)
+		{
+			iterator position = find(key);
+			if (position)
+			{
+				erase(position);
+				return (1);
+			}
+			else
+				return (0);
+		}
+
+		// erase range
+		void erase(iterator first, iterator last)
+		{
+			for (iterator it = first + 1; it != last + 1; ++it)
+				erase(it - 1);
+		}
+
+		void swap(map &other)
+		{
+			map tmp = other;
+			other._root = _root;
+			other._size = _size;
+			_root = tmp._root;
+			_size = tmp._size;
+		}
+
+		void clear()
+		{
+			_size = 0;
+			for (iterator it = begin() + 1; it != end() + 1; ++it)
+				allocNode.deallocate((it - 1).getNode(), 1);
+			_root = nullptr;
+		}
+
 
     //------------------------------------------------------------- */
     // OBSERVERS
@@ -292,6 +373,7 @@ namespace ft
 	public:
 		key_compare		key_comp() const { return _compare; }
 		valye_compare	value_comp() const { return value_compare(_compare); }
+
 
     //------------------------------------------------------------- */
     // OPERATIONS
@@ -425,6 +507,7 @@ namespace ft
 			ret.second = upper_bound(key);
 		}
 
+
     //------------------------------------------------------------- */
     // ALLOCATOR
     //------------------------------------------------------------- */
@@ -438,9 +521,21 @@ namespace ft
 	private:
 		bool areKeysEqual(key_type lhs, key_type rhs) { return (!_compare(lhs, rhs) && !_compare(rhs, lhs)); }
 
+		Node *min(Node *node)
+		{
+			while (node && node->left)
+				node = node->left;
+			return (node);
+		}
+
 		void swapNodes(Node *n1, Node *n2)
 		{
 			Node tmp = *n2;
+
+			if (_root == n1)
+				_root = n2;
+			else if (_root == n2)
+				_root = n1;
 
 			if (n1->parent)
 				n1->parent->child[childDir(n1)] = n2;
@@ -485,6 +580,9 @@ namespace ft
 			p->parent = n;
 		}
 
+		//
+		// insert helpers
+		//
 		void  rebalanceIn(Node *n)
 		{
 			Node *p = n->parent;
@@ -546,51 +644,48 @@ namespace ft
 			g->color = RED;
 		}
 
-		Node *min(Node *node)
+		//
+		// erase helpers
+		//
+		void eraseCase3(Node *P, Node *S, Node *C, Node *D, bool dir)
 		{
-			while (node && node->left)
-				node = node->left;
-			return (node);
+			rotate(P, S);
+			P->color = RED;
+			S->color = BLACK;
+			S = C;
+			// from here P RED && S BLACK
+			D = S->child[1 - dir];
+			if (D && D->color == RED)
+				return eraseCase6(P, S, D);		// D RED && S BLACK
+			C = S->chil[dir];
+			if (C && C->color == RED)
+				return eraseCase5(P, S, C, D);		// C RED && S+D BLACK
+			return eraseCase4(P, S)				// S+C+D BLACK
 		}
 
-	// 	Node *max(Node *node)
-	// 	{
-	// 		while (node && node->right)
-	// 			node = node->right;
-	// 		return (node);
-	// 	}
+		void eraseCase4(Node *P, Node *S)
+		{
+			S->color = RED;
+			P->color = BLACK;
+		}
 
-	// 	Node *successor(Node *node)
-	// 	{
-	// 		if (!node)
-	// 			return (nullptr);
-	// 		if (node->right)
-	// 			return (min(node->right));
+		void eraseCase5(Node *P, Node *S, Node *C, Node *D)
+		{
+			rotate(S, C);
+			S->color = RED;
+			C->color = BLACK;
+			D = S;
+			S = C;
+			eraseCase6(P, S, D);	// D RED && S BLACK
+		}
 
-	// 		Node *parent = node->parent;
-	// 		while (parent && node == parent->right)
-	// 		{
-	// 			node = parent;
-	// 			parent = parent->parent;
-	// 		}
-	// 		return (parent);
-	// 	}
-
-	// 	Node *predecessor(Node *node)
-	// 	{
-	// 		if (!node)
-	// 			return (nullptr);
-	// 		if (node->left)
-	// 			return (max(node->left));
-
-	// 		Node *parent = node->parent;
-	// 		while (parent && node == parent->left)
-	// 		{
-	// 			node = parent;
-	// 			parent = parent->parent;
-	// 		}
-	// 		return (parent);
-	// 	}
+		void eraseCase6(Node *P, Node *S, Node *D)
+		{
+			rotate(P, S);
+			S->color = P->color;
+			P->color = BLACK;
+			D->color = BLACK;
+		}
 
 	}; // class map
 
