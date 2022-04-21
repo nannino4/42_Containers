@@ -116,7 +116,7 @@ namespace ft
 		Node *successor(Node *node)
 		{
 			if (!node)
-				return (nullptr);
+				return (min(_root));
 			if (node->right)
 				return (min(node->right));
 
@@ -132,7 +132,7 @@ namespace ft
 		Node *predecessor(Node *node)
 		{
 			if (!node)
-				return (nullptr);
+				return (max(_root));
 			if (node->left)
 				return (max(node->left));
 
