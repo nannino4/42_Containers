@@ -1,29 +1,18 @@
+NAME		=	containers
 
-VECTOR_SRCS		= 	
-VECTOR_OBJS		= 	$(SRCS:.cpp=.o)
-
-STACK_SRCS		= 	
-STACK_OBJS		= 	$(SRCS:.cpp=.o)
-
-MAP_SRCS		= 	
-MAP_OBJS		= 	$(SRCS:.cpp=.o)
+SRCS		= 	main.cpp
+OBJS		= 	$(SRCS:.cpp=.o)
 
 CFLAGS		= 	-Wall -Wextra -Werror
 CC			= 	g++
 
 %.o :		%.cpp
-			$(CC) -c -I./vector -I./utils $(CFLAGS) $< -o $@
+			$(CC) -c -I./vector -I./stack -I./map -I./utils $(CFLAGS) $< -o $@
 
-all:		vector stack map
+all:		$(NAME)
 
-vector:	$(VECTOR_OBJS)
-			$(CC) $(VECTOR_OBJS) -o vector
-
-stack:	$(STACK_OBJS)
-			$(CC) $(STACK_OBJS) -o stack
-
-map:	$(MAP_OBJS)
-			$(CC) $(MAP_OBJS) -o map
+$(NAME):	$(OBJS)
+			$(CC) $(OBJS) -o $(NAME)
 
 clean:
 			rm -f $(OBJS)
@@ -34,4 +23,4 @@ fclean:		clean
 
 re:			fclean all
 
-.PHONY:		all clean fclean re vector stack map
+.PHONY:		all clean fclean re $(NAME)

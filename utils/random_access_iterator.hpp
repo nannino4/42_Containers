@@ -5,8 +5,18 @@
 namespace ft
 {
 	template <typename T>
-	class random_access_iterator : iterator<random_access_iterator_tag, T>
+	class random_access_iterator : public ft::iterator<random_access_iterator_tag, T>
 	{
+
+    //------------------------------------------------------------- */
+    // MEMBER TYPES
+    //------------------------------------------------------------- */
+	public:
+		typedef T							value_type;
+		typedef long int					difference_type;
+		typedef T*							pointer;
+		typedef T&							reference;
+		typedef random_access_iterator_tag	iterator_category;
 
     //------------------------------------------------------------- */
     //ATTRIBUTES

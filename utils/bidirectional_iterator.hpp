@@ -2,11 +2,26 @@
 
 #include "iterator.hpp"
 
+#define LEFT		0
+#define RIGHT		1
+#define left		child[LEFT]
+#define right		child[RIGHT]
+
 namespace ft
 {
 	template<class T, class Node>
-	class bidirectional_iterator : iterator<bidirectional_iterator_tag, T>
+	class bidirectional_iterator : public ft::iterator<bidirectional_iterator_tag, T>
 	{
+
+    //------------------------------------------------------------- */
+    // MEMBER TYPES
+    //------------------------------------------------------------- */
+	public:
+		typedef T							value_type;
+		typedef long int					difference_type;
+		typedef T*							pointer;
+		typedef T&							reference;
+		typedef bidirectional_iterator_tag	iterator_category;
 
     //------------------------------------------------------------- */
     // ATTRIBUTES
@@ -21,12 +36,14 @@ namespace ft
     //------------------------------------------------------------- */
 	public:
 		// default constructor
-        bidirectional_iterator(Node *node = nullptr, Node *root = nullptr) : 
-			_node(node), _root(root) {}
+        bidirectional_iterator(Node *node = nullptr, Node *root = nullptr)
+		{
+			_node = node;
+			_root = root;
+		}
 
 		// copy constructor
-		bidirectional_iterator(bidirectional_iterator const &other) :
-			_node(other.getNode()), _root(other.getRoot())) {}
+		bidirectional_iterator(bidirectional_iterator const &other) { *this = other; }
 
 		// destructor
 		~bidirectional_iterator() {}
@@ -47,9 +64,9 @@ namespace ft
     // GETTERS
     //------------------------------------------------------------- */
 	public:
-		Node 	*getNode() { return _node; }
-		Node 	*getValue() { return _node->value; }
-		Node 	*getRoot() { return _root; }
+		Node 		*getNode() const { return _node; }
+		value_type 	getValue() const { return _node->value; }
+		Node 		*getRoot() const { return _root; }
 
 
     //------------------------------------------------------------- */
@@ -86,6 +103,22 @@ namespace ft
 			bidirectional_iterator tmp(*this);
 			operator--();
 			return (tmp);
+		}
+
+		bidirectional_iterator	operator+(difference_type n) const
+		{
+			bidirectional_iterator ret(*this);
+			while (n > 0)
+				++ret;
+			return ret;
+		}
+
+		bidirectional_iterator	operator-(difference_type n) const
+		{
+			bidirectional_iterator ret(*this);
+			while (n < 0)
+				--ret;
+			return ret;
 		}
 
 

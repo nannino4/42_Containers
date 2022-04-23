@@ -21,7 +21,6 @@ namespace ft
 		typedef Pointer				pointer;
 		typedef Reference			reference;
 		typedef Category			iterator_category;
-
 	};
 	
 	/*
@@ -29,14 +28,14 @@ namespace ft
 	**		determines the traits of the iterator
 	*/
 
-	template<class iterator>
+	template<class Iter>
 	struct iterator_traits
 	{
-		typedef typename iterator::difference_type		difference_type;
-		typedef typename iterator::value_type			value_type;
-		typedef typename iterator::pointer				pointer;
-		typedef typename iterator::reference			reference;
-		typedef typename iterator::iterator_category	iterator_category;
+		typedef typename Iter::value_type			value_type;
+		typedef typename Iter::difference_type		difference_type;
+		typedef typename Iter::pointer				pointer;
+		typedef typename Iter::reference			reference;
+		typedef typename Iter::iterator_category	iterator_category;
 	
 	};
 
