@@ -62,7 +62,7 @@ namespace ft
 		Node					*_root;
 		size_type				_size;
 		key_compare				_compare;
-		allocator_type			_allocValue;
+		allocator_type			_allocPair;
 		std::allocator<Node>	_allocNode;
 
     //------------------------------------------------------------- */
@@ -75,7 +75,7 @@ namespace ft
 			_root = nullptr;
 			_size = 0;
 			_compare = comp;
-			_allocValue = alloc;
+			_allocPair = alloc;
 		}
 
 		// range constructor
@@ -85,7 +85,7 @@ namespace ft
 			_root = nullptr;
 			_size = 0;
 			_compare = comp;
-			_allocValue = alloc;
+			_allocPair = alloc;
 			insert(first, last);
 		}
 
@@ -110,15 +110,15 @@ namespace ft
     // ITERATORS
     //------------------------------------------------------------- */
 	public:
-		iterator		begin() { return iterator(min(_root), _root); }
-		const_iterator	begin() { return const_iterator(min(_root), _root); }
-		iterator		end() { return iterator(nullptr, _root); }
-		const_iterator	end() { return const_iterator(nullptr, _root); }
+		iterator		begin()			{ return iterator(min(_root), _root); }
+		const_iterator	begin() const	{ return const_iterator(min(_root), _root); }
+		iterator		end()			{ return iterator(nullptr, _root); }
+		const_iterator	end() const		{ return const_iterator(nullptr, _root); }
 
-		reverse_iterator		rbegin() { return reverse_iterator(end()); }
-		const_reverse_iterator	rbegin() { return const_reverse_iterator(end()); }
-		reverse_iterator		rend() { return reverse_iterator(begin()); }
-		const_reverse_iterator	rbegin() { return const_reverse_iterator(end()); }
+		reverse_iterator		rbegin()		{ return reverse_iterator(end()); }
+		const_reverse_iterator	rbegin() const	{ return const_reverse_iterator(end()); }
+		reverse_iterator		rend()			{ return reverse_iterator(begin()); }
+		const_reverse_iterator	rend() const	{ return const_reverse_iterator(begin()); }
 
     //------------------------------------------------------------- */
     // CAPACITY
@@ -126,7 +126,7 @@ namespace ft
 	public:
 		bool		empty() const { return !_size; }
 		size_type	size() const { return _size; }
-		size_type	max_size() const { return allocNode.max_size(); }
+		size_type	max_size() const { return _allocNode.max_size(); }
 
     //------------------------------------------------------------- */
     // MODIFIERS
@@ -136,13 +136,13 @@ namespace ft
 		pair<iterator,bool> insert(const value_type &val)
 		{
 			// check if val already exists
-			if (find(val.first) != end())
-				return pair<find(val.first), false>;
+			if (find(val) != end())
+				return ft::make_pair(find(val), false);
 
 			// create new node n
 			++_size;
 			Node *n = _allocNode.allocate(1);
-			n->value = val;
+			_allocPair.construct(&n->value, val);
 			n->color = RED;
 			n->left = nullptr;
 			n->right = nullptr;
@@ -154,7 +154,7 @@ namespace ft
 			while (tmp)
 			{
 				p = tmp;
-				if (value_comp()(tmp->val, n->val))
+				if (value_comp()(tmp->value, n->value))
 					tmp = tmp->right;
 				else
 					tmp = tmp->left;
@@ -171,10 +171,10 @@ namespace ft
 			}
 
 			// rebalance
-			rebalance(n);
+			rebalanceIn(n);
 
 			// return
-			return (make_pair(iterator(n, _root), true));
+			return (ft::make_pair(iterator(n, _root), true));
 		}
 
 		// insert with hint
@@ -190,7 +190,7 @@ namespace ft
 				// create new node n
 				++_size;
 				Node *n = _allocNode.allocate(1);
-				n->value = val;
+				_allocPair.construct(&n->value, val);
 				n->color = RED;
 				n->left = nullptr;
 				n->right = nullptr;
@@ -200,7 +200,7 @@ namespace ft
 				p->right = n;
 
 				// rebalance
-				rebalance(n);
+				rebalanceIn(n);
 
 				return (iterator(n, _root));
 			}
@@ -212,7 +212,7 @@ namespace ft
 		void insert(InputIterator first, InputIterator last)
 		{
 			for (InputIterator it = first; it != last; ++it)
-				insert(*InputIterator);
+				insert(*it);
 		}
 
 		// erase single
@@ -223,7 +223,7 @@ namespace ft
 			if (!N)
 				return ;
 
-			--size;
+			--_size;
 
 			// N is _root && has NO child
 			if (N == _root && !N->left && !N->right)
@@ -234,7 +234,9 @@ namespace ft
 			}
 
 			if (N->left && N->right)	// N has 2 children
+			{
 				swapNodes(N, (position - 1).getNode());
+			}
 
 			// from now on N has at most 1 child
 
@@ -279,7 +281,7 @@ namespace ft
 					while (P)
 					{
 						S = P->child[1 - dir];
-						D = S->child[1 - dir]
+						D = S->child[1 - dir];
 						C = S->child[dir];
 						if (S->color = RED)
 							return eraseCase3(P, S, C, D, dir);		// S is RED => P+C+D BLACK
@@ -287,14 +289,14 @@ namespace ft
 						// S is BLACK
 
 						if (D && D->color == RED)
-							return eraseCase6(P, S, D)				// D is RED && S is BLACK
+							return eraseCase6(P, S, D);				// D is RED && S is BLACK
 						if (C && C->color == RED)
-							return eraseCase5(P, S, C, D)			// C is RED && S+D BLACK
+							return eraseCase5(P, S, C, D);			// C is RED && S+D BLACK
 
 						// both nephews are NULL or BLACK
 
 						if (P->color == RED)
-							return eraseCase4(P, S)					// P is RED && C+S+D BLACK
+							return eraseCase4(P, S);					// P is RED && C+S+D BLACK
 
 						// Case1:
 						// P+C+S+D BLACK
@@ -309,11 +311,11 @@ namespace ft
 			}
 		}
 
-		// erase specific value
+		// erase specific key
 		size_type erase(const value_type &value)
 		{
 			iterator position = find(value);
-			if (position)
+			if (position.getNode())
 			{
 				erase(position);
 				return (1);
@@ -342,7 +344,7 @@ namespace ft
 		{
 			_size = 0;
 			for (iterator it = begin(); it != end(); )
-				allocNode.deallocate((it++).getNode(), 1);
+				_allocNode.deallocate((it++).getNode(), 1);
 			_root = nullptr;
 		}
 
@@ -352,7 +354,7 @@ namespace ft
     //------------------------------------------------------------- */
 	public:
 		key_compare		key_comp() const { return _compare; }
-		value_compare	value_comp() const { return _compare; }
+		value_compare	value_comp() const { return value_compare(_compare); }
 
 
     //------------------------------------------------------------- */
@@ -365,9 +367,25 @@ namespace ft
 
 			while (node)
 			{
-				if (areValuesEqual(value, node->value))
+				if (areValuesEqual(value, node->value.first))
 					return iterator(node, _root);
-				else if (_compare(value, node->value))
+				else if (_compare(value, node->value.first))
+					node = node->left;
+				else
+					node = node->right;
+			}
+			return end();
+		}
+
+		const_iterator	find(const value_type &value) const
+		{
+			Node *node = _root;
+
+			while (node)
+			{
+				if (areValuesEqual(value, node->value.first))
+					return const_iterator(node, _root);
+				else if (_compare(value, node->value.first))
 					node = node->left;
 				else
 					node = node->right;
@@ -390,9 +408,27 @@ namespace ft
 
 			while (node)
 			{
-				if (!_compare(node->value, value))
+				if (!_compare(node->value.first, value))
 				{
 					ret = iterator(node, _root);
+					node = node->left;
+				}
+				else
+					node = node->right;
+			}
+			return (ret);
+		}
+
+		const_iterator lower_bound(const value_type &value) const
+		{
+			const_iterator ret = end();
+			Node *node = _root;
+
+			while (node)
+			{
+				if (!_compare(node->value.first, value))
+				{
+					ret = const_iterator(node, _root);
 					node = node->left;
 				}
 				else
@@ -408,7 +444,7 @@ namespace ft
 
 			while (node)
 			{
-				if (_compare(value, node->value))
+				if (_compare(value, node->value.first))
 				{
 					ret = iterator(node, _root);
 					node = node->left;
@@ -419,20 +455,40 @@ namespace ft
 			return (ret);
 		}
 
-		pair<iterator,iterator> equal_range(const value_type &value) const
+		const_iterator upper_bound(const value_type &value) const
 		{
-			pair<iterator,iterator> ret;
+			const_iterator ret = end();
+			Node *node = _root;
 
-			ret.first = lower_bound(value);
-			ret.second = upper_bound(value);
+			while (node)
+			{
+				if (_compare(value, node->value.first))
+				{
+					ret = const_iterator(node, _root);
+					node = node->left;
+				}
+				else
+					node = node->right;
+			}
+			return (ret);
 		}
 
-		pair<iterator,iterator> equal_range(const value_type &value) const
+		pair<const_iterator,const_iterator> equal_range(const value_type &value) const
+		{
+			pair<const_iterator,const_iterator> ret;
+
+			ret.first = lower_bound(value);
+			ret.second = upper_bound(value);
+			return ret;
+		}
+
+		pair<iterator,iterator> equal_range(const value_type &value)
 		{
 			pair<iterator,iterator> ret;
 
 			ret.first = lower_bound(value);
 			ret.second = upper_bound(value);
+			return ret;
 		}
 
 
@@ -440,16 +496,16 @@ namespace ft
     // ALLOCATOR
     //------------------------------------------------------------- */
 	public:
-		allocator_type	get_allocator() const { return _allocValue; }
+		allocator_type	get_allocator() const { return _allocPair; }
 
 	
     //------------------------------------------------------------- */
     // PRIVATE MEMBER FUNCTIONS
     //------------------------------------------------------------- */
 	private:
-		bool areValuesEqual(value_type lhs, value_type rhs) { return (!_compare(lhs, rhs) && !_compare(rhs, lhs)); }
+		bool areValuesEqual(value_type lhs, value_type rhs) const { return (!_compare(lhs, rhs) && !_compare(rhs, lhs)); }
 
-		Node *min(Node *node)
+		Node *min(Node *node) const
 		{
 			while (node && node->left)
 				node = node->left;
@@ -478,20 +534,20 @@ namespace ft
 			if (n2->right)
 				n2->right->parent = n1;
 
-			n2->value = n1->value;
+			_allocPair.construct(&n2->value, n1->value);
 			n2->parent = n1->parent;
 			n2->left = n1->left;
 			n2->right = n1->right;
 			n2->color = n1->color;
 			
-			n1->value = tmp->value;
-			n1->parent = tmp->parent;
-			n1->left = tmp->left;
-			n1->right = tmp->right;
-			n1->color = tmp->color;
+			_allocPair.construct(&n1->value, tmp.value);
+			n1->parent = tmp.parent;
+			n1->left = tmp.left;
+			n1->right = tmp.right;
+			n1->color = tmp.color;
 		}
 
-		Node *rotate(Node *p, Node *n)
+		void rotate(Node *p, Node *n)
 		{
 			Node *g = p->parent;
 			bool dir = childDir(n);
@@ -540,7 +596,7 @@ namespace ft
 			p->color = BLACK;
 			u->color = BLACK;
 			g->color = RED;
-			rebalance(g);
+			rebalanceIn(g);
 		}
 
 		void rebalanceInCase3(Node *n)
@@ -584,11 +640,11 @@ namespace ft
 			// from here P RED && S BLACK
 			D = S->child[1 - dir];
 			if (D && D->color == RED)
-				return eraseCase6(P, S, D);		// D RED && S BLACK
-			C = S->chil[dir];
+				return eraseCase6(P, S, D);			// D RED && S BLACK
+			C = S->child[dir];
 			if (C && C->color == RED)
 				return eraseCase5(P, S, C, D);		// C RED && S+D BLACK
-			return eraseCase4(P, S)				// S+C+D BLACK
+			return eraseCase4(P, S);				// S+C+D BLACK
 		}
 
 		void eraseCase4(Node *P, Node *S)
