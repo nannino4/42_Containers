@@ -64,9 +64,9 @@ namespace ft
 			_capacity = n;
 			_vector = _allocator.allocate(_capacity);
 
-			for ( iterator i = _vector; i < _vector + _size; i++)
+			for ( pointer i = _vector; i < _vector + _size; i++)
 			{
-				_allocator.construct(&(*i), val);
+				_allocator.construct(i, val);
 			}
 		}
 
@@ -81,9 +81,9 @@ namespace ft
 			_capacity = _size;
 			_vector = _allocator.allocate(_capacity);
 
-			for (iterator i = _vector; i < _vector + _size; i++)
+			for (pointer i = _vector; i < _vector + _size; i++)
 			{
-				_allocator.construct(&(*i), *first);
+				_allocator.construct(i, *first);
 				++first;
 			}
 		}
@@ -95,9 +95,9 @@ namespace ft
 			_capacity = _size;
 			_vector = _allocator.allocate(_capacity);
 
-			for (iterator i = _vector; i < _vector + _size; i++)
+			for (pointer i = _vector; i < _vector + _size; i++)
 			{
-				_allocator.construct(&(*i), *first);
+				_allocator.construct(i, *first);
 				++first;
 			}
 		}
@@ -161,8 +161,8 @@ namespace ft
 				Returns a reverse iterator to the last element of the vector.
 				If empty, should not be dereferenced.	
 		*/
-		reverse_iterator rbegin() { return reverse_iterator(_vector + _size - 1); }
-		const_reverse_iterator rbegin() const { return const_reverse_iterator(_vector + _size - 1); }
+		reverse_iterator rbegin() { return reverse_iterator(end()); }
+		const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
 
 		/*
 			ft::vector::rend()
@@ -170,8 +170,8 @@ namespace ft
 					element of the vector.
 				It does not point to any element, and thus shall not be dereferenced.
 		*/
-		reverse_iterator rend() { return reverse_iterator(_vector - 1); }
-		const_reverse_iterator rend() const { return const_reverse_iterator(_vector - 1); }
+		reverse_iterator rend() { return reverse_iterator(begin()); }
+		const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
 	
 
     //------------------------------------------------------------- */

@@ -108,7 +108,7 @@ namespace ft
 		bidirectional_iterator	operator+(difference_type n) const
 		{
 			bidirectional_iterator ret(*this);
-			while (n > 0)
+			while (n-- > 0)
 				++ret;
 			return ret;
 		}
@@ -116,7 +116,7 @@ namespace ft
 		bidirectional_iterator	operator-(difference_type n) const
 		{
 			bidirectional_iterator ret(*this);
-			while (n < 0)
+			while (n-- > 0)
 				--ret;
 			return ret;
 		}

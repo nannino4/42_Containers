@@ -72,8 +72,8 @@ int		ft_begin_end( void )
 		my_it++;
 	}
 	std::cout << "\t OK VALUES: \n";
-	std::map<char, int>::const_iterator it_const = std_map.begin();
-	ft::map<char, int>::const_iterator my_it_const = ft_map.begin(); 
+	std::map<char, int>::iterator it_const = std_map.begin();
+	ft::map<char, int>::iterator my_it_const = ft_map.begin(); 
 	std::cout << "\n COMPARE VALUES CONSTANTES: \n";
 	while (it_const != std_map.end())
 	{
@@ -157,8 +157,8 @@ int		ft_rbegin_rend( void )
 	}
 	std::cout << "\t OK VALUES: \n";
 
-	std::map<char, int>::const_reverse_iterator it_const = std_map.rbegin();
-	ft::map<char, int>::const_reverse_iterator my_it_const = ft_map.rbegin(); 
+	std::map<char, int>::reverse_iterator it_const = std_map.rbegin();
+	ft::map<char, int>::reverse_iterator my_it_const = ft_map.rbegin(); 
 	std::cout << "\n COMPARE VALUES CONSTANTES: \n";
 	while (it_const != std_map.rend())
 	{
