@@ -5,6 +5,8 @@
 #include "pair.hpp"
 #include "bidirectional_iterator.hpp"
 #include "reverse_iterator.hpp"
+#include "equal.hpp"
+#include "lexicographical_compare.hpp"
 
 #define BLACK		0
 #define RED			1
@@ -16,16 +18,17 @@
 
 namespace ft
 {
-	template <class T, class Compare = std::less<T>, class Alloc = std::allocator<T> >
-	class set
+	template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<pair<const Key, T> > >
+	class map
 	{
 
     //------------------------------------------------------------- */
     // MEMBER TYPES
     //------------------------------------------------------------- */
 	public:
-		typedef T												key_type;
-		typedef T												value_type;
+		typedef Key												key_type;
+		typedef T												mapped_type;
+		typedef pair<const key_type,mapped_type>				value_type;
 		typedef Alloc											allocator_type;
 
 	private:
@@ -38,8 +41,22 @@ namespace ft
 		};
 
 	public:
-		typedef Compare												key_compare;
-		typedef Compare												value_compare;
+		typedef Compare											key_compare;
+		class													value_compare
+		{
+			friend class map;
+		protected:
+			key_compare comp;
+			value_compare(key_compare c = key_compare()) : comp(c) {}
+		public:
+			typedef bool result_type;
+			typedef value_type first_argument_type;
+			typedef value_type second_argument_type;
+			bool operator()(const value_type &x, const value_type &y) const
+			{
+				return comp(x.first, y.first);
+			}
+		};
 
 		typedef typename allocator_type::reference 					reference;
 		typedef typename allocator_type::const_reference			const_reference;
@@ -70,7 +87,7 @@ namespace ft
     //------------------------------------------------------------- */
 	public:
 		// default constructor = empty
-		explicit set(const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type())
+		explicit map(const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type())
 		{
 			_root = nullptr;
 			_size = 0;
@@ -80,7 +97,7 @@ namespace ft
 
 		// range constructor
 		template <class InputIterator>
-		set(InputIterator first, InputIterator last, const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type())
+		map(InputIterator first, InputIterator last, const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type())
 		{
 			_root = nullptr;
 			_size = 0;
@@ -90,16 +107,16 @@ namespace ft
 		}
 
 		// copy constructor
-		set(const set &other) : _root(nullptr), _size(0)
+		map(const map &other) : _root(nullptr), _size(0)
 		{
 			*this = other;
 		}
 
 		// destructor
-		~set() { clear(); }
+		~map() { clear(); }
 
 		// assign operator
-		set &operator=(const set &other)
+		map &operator=(const map &other)
 		{
 			if (this != &other)
 			{
@@ -134,6 +151,22 @@ namespace ft
 		size_type	max_size() const { return _allocNode.max_size(); }
 
     //------------------------------------------------------------- */
+    // ELEMENT ACCESS
+    //------------------------------------------------------------- */
+	public:
+		mapped_type &operator[](const key_type &key)
+		{
+			iterator it = find(key);
+			if (it.getNode())
+				return (it->second);
+			else
+			{
+				value_type value = ft::make_pair(key, mapped_type());
+				return (insert(value).first)->second;
+			}
+		}
+
+    //------------------------------------------------------------- */
     // MODIFIERS
     //------------------------------------------------------------- */
 	public:
@@ -141,8 +174,8 @@ namespace ft
 		pair<iterator,bool> insert(const value_type &val)
 		{
 			// check if val already exists
-			if (find(val) != end())
-				return ft::make_pair(find(val), false);
+			if (find(val.first) != end())
+				return ft::make_pair(find(val.first), false);
 
 			// create new node n
 			++_size;
@@ -186,8 +219,8 @@ namespace ft
 		iterator insert(iterator position, const value_type &val)
 		{
 			// check if val already exists
-			if (find(val) != end())
-				return find(val);
+			if (find(val.first) != end())
+				return find(val.first);
 
 			// check if hint is correct
 			if (!position.getNode())
@@ -381,7 +414,7 @@ namespace ft
 				erase(it++);
 		}
 
-		void swap(set &other)
+		void swap(map &other)
 		{
 			Node		*tmpRoot = other._root;
 			size_type	tmpSize = other.size();
@@ -420,9 +453,9 @@ namespace ft
 
 			while (node)
 			{
-				if (areKeysEqual(key, node->value))
+				if (areKeysEqual(key, node->value.first))
 					return iterator(node, _root);
-				else if (_compare(key, node->value))
+				else if (_compare(key, node->value.first))
 					node = node->left;
 				else
 					node = node->right;
@@ -436,9 +469,9 @@ namespace ft
 
 			while (node)
 			{
-				if (areKeysEqual(key, node->value))
+				if (areKeysEqual(key, node->value.first))
 					return const_iterator(node, _root);
-				else if (_compare(key, node->value))
+				else if (_compare(key, node->value.first))
 					node = node->left;
 				else
 					node = node->right;
@@ -461,7 +494,7 @@ namespace ft
 
 			while (node)
 			{
-				if (!_compare(node->value, key))
+				if (!_compare(node->value.first, key))
 				{
 					ret = iterator(node, _root);
 					node = node->left;
@@ -479,7 +512,7 @@ namespace ft
 
 			while (node)
 			{
-				if (!_compare(node->value, key))
+				if (!_compare(node->value.first, key))
 				{
 					ret = const_iterator(node, _root);
 					node = node->left;
@@ -497,7 +530,7 @@ namespace ft
 
 			while (node)
 			{
-				if (_compare(key, node->value))
+				if (_compare(key, node->value.first))
 				{
 					ret = iterator(node, _root);
 					node = node->left;
@@ -515,7 +548,7 @@ namespace ft
 
 			while (node)
 			{
-				if (_compare(key, node->value))
+				if (_compare(key, node->value.first))
 				{
 					ret = const_iterator(node, _root);
 					node = node->left;
@@ -528,7 +561,11 @@ namespace ft
 
 		pair<const_iterator,const_iterator> equal_range(const key_type &key) const
 		{
-			return make_pair(lower_bound(key), upper_bound(key));
+			pair<const_iterator,const_iterator> ret;
+
+			ret.first = lower_bound(key);
+			ret.second = upper_bound(key);
+			return ret;
 		}
 
 		pair<iterator,iterator> equal_range(const key_type &key)
@@ -749,6 +786,61 @@ namespace ft
 			D->color = BLACK;
 		}
 
-	}; // class set
+	}; // class map
+
+
+//------------------------------------------------------------- */
+// NON-MEMBER FUNCTIONS
+//------------------------------------------------------------- */
+
+	//
+	// swap
+	//
+	template< class Key, class T, class Compare, class Alloc >
+	void swap(map<Key,T,Compare,Alloc>& lhs, map<Key,T,Compare,Alloc>& rhs )
+	{
+		lhs.swap(rhs);
+	}
+
+	//
+	// relational operators
+	//
+	template< class Key, class T, class Compare, class Alloc >
+	bool operator==(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
+	{
+		if (lhs.size() != rhs.size())
+			return false;
+		return equal(lhs.begin(), lhs.end(), rhs.begin());
+	}
+
+	template< class Key, class T, class Compare, class Alloc >
+	bool operator!=(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
+	{
+		return !(lhs == rhs);
+	}
+
+	template< class Key, class T, class Compare, class Alloc >
+	bool operator<(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
+	{
+		return lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+	}
+
+	template< class Key, class T, class Compare, class Alloc >
+	bool operator<=(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
+	{
+		return !(rhs < lhs);
+	}
+
+	template< class Key, class T, class Compare, class Alloc >
+	bool operator>(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
+	{
+		return !(lhs <= rhs);
+	}
+
+	template< class Key, class T, class Compare, class Alloc >
+	bool operator>=(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
+	{
+		return !(lhs < rhs);
+	}
 
 } // namespace ft

@@ -1,26 +1,34 @@
-NAME		=	containers
+NAME			=	ft_containers
+NAME_BONUS		=	ft_containers_bonus
 
-SRCS		= 	main.cpp
-OBJS		= 	$(SRCS:.cpp=.o)
+SRCS			= 	main.cpp
+OBJS			= 	$(SRCS:.cpp=.o)
+SRCS_BONUS		= 	main_bonus.cpp
+OBJS_BONUS		= 	$(SRCS_BONUS:.cpp=.o)
 
-CFLAGS		= 	-Wall -Wextra -Werror
-CC			= 	g++
+CFLAGS			= 	-Wall -Wextra -Werror
+CC				= 	g++
 
-%.o :		%.cpp
-			$(CC) -c -I./vector -I./stack -I./map -I./utils $(CFLAGS) $< -o $@
+%.o :			%.cpp
+				$(CC) -c -I./tests -I./containers -I./utils $(CFLAGS) $< -o $@
 
-all:		$(NAME)
+all:			$(NAME)
 
-$(NAME):	$(OBJS)
-			$(CC) $(OBJS) -o $(NAME)
+$(NAME):		$(OBJS)
+				$(CC) $(OBJS) -o $(NAME)
+
+bonus:			$(NAME_BONUS)
+
+$(NAME_BONUS):	$(OBJS_BONUS)
+				$(CC) $(OBJS_BONUS) -o $(NAME_BONUS)
 
 clean:
-			rm -f $(OBJS)
+				rm -f $(OBJS)
 
-fclean:		clean
-			rm -f $(NAME)
+fclean:			clean
+				rm -f $(NAME)
 
 
-re:			fclean all
+re:				fclean all
 
-.PHONY:		all clean fclean re $(NAME)
+.PHONY:			all clean fclean re $(NAME) bonus $(NAME_BONUS)

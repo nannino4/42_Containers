@@ -40,6 +40,13 @@ int main(int argc, char** argv) {
 	if (ftOutput.output != stdOutput.output)
 		return (error_exit("ft::map has different outputs than std::map"));
 
+	stdOutput = testSet("STD", seed);
+	ftOutput = testSet("FT", seed);
+	if ((ftOutput.time / stdOutput.time) > 20)
+		return (error_exit("ft::set is too slow"));
+	if (ftOutput.output != stdOutput.output)
+		return (error_exit("ft::set has different outputs than std::set"));
+
 	std::cout << "all tests passed successfully!" << std::endl;
 
 	return (0);
