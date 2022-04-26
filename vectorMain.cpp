@@ -1433,18 +1433,7 @@ int		ft_begin_end()
 	std::cout << "Sum = " << sum << std::endl;
 
 	std::cout << "Testing const begin and const end: " << std::endl;
-	int range_array[] = { 127, 98, -56, 10000, 33336};
-	
-	ft::vector<int>::const_iterator ft_iterator(&(range_array[0]));
-	const ft::vector<int> ft_vector2(ft_iterator, ft_iterator + 5);
-
-	for (int i = 0; i < 5 ; i++)
-	{
-		std::cout << *ft_iterator << " ";
-		ft_iterator++;
-	}
-	std::cout << std::endl;
-	// std::cout << ft_vector2 << std::endl;
+	const ft::vector<int> ft_vector2(5, 42);
 	for (ft::vector<int>::const_iterator it_const = ft_vector2.begin() ; it_const != ft_vector2.end(); ++it_const)
     	std::cout << ' ' << *it_const;
 	std::cout << std::endl;
@@ -1476,18 +1465,7 @@ int		ft_begin_end()
 	std::cout << "sum2 = " << sum2 << std::endl;
 
 	std::cout << "Testing const begin and const end: " << std::endl;
-	int range_array2[] = { 127, 98, -56, 10000, 33336};
-	
-	std::vector<int>::const_iterator std_iterator(&(range_array2[0]));
-	const std::vector<int> std_vector2(std_iterator, std_iterator + 5);
-
-	for (int i = 0; i < 5 ; i++)
-	{
-		std::cout << *std_iterator << " ";
-		std_iterator++;
-	}
-	std::cout << std::endl;
-	// std::cout << std_vector2 << std::endl;
+	const std::vector<int> std_vector2(5, 42);
 	for (std::vector<int>::const_iterator it_const2 = std_vector2.begin() ; it_const2 != std_vector2.end(); ++it_const2)
     	std::cout << ' ' << *it_const2;
 	std::cout << std::endl;
@@ -1541,10 +1519,7 @@ int		ft_rbegin_rend()
 	
   	std::cout << '\n';
 	std::cout << "Testing const begin and const end: " << std::endl;
-	int range_array[] = { 127, 98, -56, 10000, 33336};
-	ft::vector<int>::const_iterator ft_iterator(&(range_array[0]));
-	ft::vector<int> ft_vector2(ft_iterator, ft_iterator + 5);
-	// std::cout << ft_vector2 << std::endl;
+	ft::vector<int> ft_vector2(5, 42);
 	for (ft::vector<int>::reverse_iterator it_const = ft_vector2.rbegin() ; it_const != ft_vector2.rend(); ++it_const)
     	std::cout << ' ' << *it_const;
 	std::cout << std::endl;
@@ -1572,10 +1547,7 @@ int		ft_rbegin_rend()
     	std::cout << ' ' << *it;
   	std::cout << '\n';
 	std::cout << "Testing const begin and const end: " << std::endl;
-	int range_arraystd[] = { 127, 98, -56, 10000, 33336};
-		std::vector<int>::const_iterator std_iterator(&(range_arraystd[0]));
-	std::vector<int> std_vector2(std_iterator, std_iterator + 5);
-	// std::cout << std_vector2 << std::endl;
+	std::vector<int> std_vector2(5, 42);
 	for (std::vector<int>::reverse_iterator it_const2 = std_vector2.rbegin() ; it_const2 != std_vector2.rend(); ++it_const2)
     	std::cout << ' ' << *it_const2;
 	std::cout << std::endl;
