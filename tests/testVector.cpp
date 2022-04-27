@@ -2,8 +2,8 @@
 #include <vector>
 #include <sys/time.h>
 
-#include "../containers/vector.hpp"
 #include "tests.hpp"
+#include "../containers/vector.hpp"
 
 #define COUNT 10
 

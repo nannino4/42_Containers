@@ -1,7 +1,9 @@
-#include <iostream>
 #include <string>
-#include <vector>
-#include <vector.hpp>
+#include <stack>
+#include <sys/time.h>
+
+#include "tests.hpp"
+#include "../containers/stack.hpp"
 
 template<typename T>
 class MutantStack : public ft::stack<T>
