@@ -4,8 +4,8 @@
 
 #define LEFT		0
 #define RIGHT		1
-#define left		child[LEFT]
-#define right		child[RIGHT]
+#define _left_		child[LEFT]
+#define _right_		child[RIGHT]
 
 namespace ft
 {
@@ -128,15 +128,15 @@ namespace ft
 	private:
 		Node *max(Node *node)
 		{
-			while (node && node->right)
-				node = node->right;
+			while (node && node->_right_)
+				node = node->_right_;
 			return (node);
 		}
 
 		Node *min(Node *node)
 		{
-			while (node && node->left)
-				node = node->left;
+			while (node && node->_left_)
+				node = node->_left_;
 			return (node);
 		}
 
@@ -144,11 +144,11 @@ namespace ft
 		{
 			if (!node)
 				return (min(_root));
-			if (node->right)
-				return (min(node->right));
+			if (node->_right_)
+				return (min(node->_right_));
 
 			Node *parent = node->parent;
-			while (parent && node == parent->right)
+			while (parent && node == parent->_right_)
 			{
 				node = parent;
 				parent = parent->parent;
@@ -160,11 +160,11 @@ namespace ft
 		{
 			if (!node)
 				return (max(_root));
-			if (node->left)
-				return (max(node->left));
+			if (node->_left_)
+				return (max(node->_left_));
 
 			Node *parent = node->parent;
-			while (parent && node == parent->left)
+			while (parent && node == parent->_left_)
 			{
 				node = parent;
 				parent = parent->parent;

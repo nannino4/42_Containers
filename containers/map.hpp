@@ -12,9 +12,9 @@
 #define RED			1
 #define LEFT		0
 #define RIGHT		1
-#define left		child[LEFT]
-#define right		child[RIGHT]
-#define childDir(N) ( N == (N->parent)->right ? RIGHT : LEFT )
+#define _left_		child[LEFT]
+#define _right_		child[RIGHT]
+#define childDir(N) ( N == (N->parent)->_right_ ? RIGHT : LEFT )
 
 namespace ft
 {
@@ -182,8 +182,8 @@ namespace ft
 			Node *n = _allocNode.allocate(1);
 			_allocPair.construct(&n->value, val);
 			n->color = RED;
-			n->left = nullptr;
-			n->right = nullptr;
+			n->_left_ = nullptr;
+			n->_right_ = nullptr;
 			n->parent = nullptr;
 
 			// find parent node p
@@ -193,9 +193,9 @@ namespace ft
 			{
 				p = tmp;
 				if (value_comp()(tmp->value, n->value))
-					tmp = tmp->right;
+					tmp = tmp->_right_;
 				else
-					tmp = tmp->left;
+					tmp = tmp->_left_;
 			}
 
 			// insert n
@@ -203,9 +203,9 @@ namespace ft
 			if (p)
 			{
 				if (value_comp()(p->value, n->value))
-					p->right = n;
+					p->_right_ = n;
 				else
-					p->left = n;
+					p->_left_ = n;
 			}
 
 			// rebalance
@@ -235,17 +235,17 @@ namespace ft
 				Node *n = _allocNode.allocate(1);
 				_allocPair.construct(&n->value, val);
 				n->color = RED;
-				n->left = nullptr;
-				n->right = nullptr;
+				n->_left_ = nullptr;
+				n->_right_ = nullptr;
 				n->parent = nullptr;
 
 				// insert n
-				if (!p->right)
-					p->right = n;
+				if (!p->_right_)
+					p->_right_ = n;
 				else
 				{
 					p = (position + 1).getNode();
-					p->left = n;
+					p->_left_ = n;
 				}
 				n->parent = p;
 
@@ -264,17 +264,17 @@ namespace ft
 				Node *n = _allocNode.allocate(1);
 				_allocPair.construct(&n->value, val);
 				n->color = RED;
-				n->left = nullptr;
-				n->right = nullptr;
+				n->_left_ = nullptr;
+				n->_right_ = nullptr;
 				n->parent = nullptr;
 
 				// insert n
-				if (!p->left)
-					p->left = n;
+				if (!p->_left_)
+					p->_left_ = n;
 				else
 				{
 					p = (position - 1).getNode();
-					p->right = n;
+					p->_right_ = n;
 				}
 				n->parent = p;
 
@@ -305,14 +305,14 @@ namespace ft
 			--_size;
 
 			// N is _root && has NO child
-			if (N == _root && !N->left && !N->right)
+			if (N == _root && !N->_left_ && !N->_right_)
 			{
 				_allocNode.deallocate(N, 1);
 				_root = nullptr;
 				return ;
 			}
 
-			if (N->left && N->right)	// N has 2 children
+			if (N->_left_ && N->_right_)	// N has 2 children
 			{
 				swapNodes(N, (position - 1).getNode());
 			}
@@ -327,25 +327,25 @@ namespace ft
 			}
 			else						// N is BLACK && has at most 1 RED child
 			{
-				if (N->left)				// N has 1 child (left)
+				if (N->_left_)				// N has 1 child (_left_)
 				{
 					if (N->parent)
-						N->parent->child[childDir(N)] = N->left;
+						N->parent->child[childDir(N)] = N->_left_;
 					else
-						_root = N->right;
-					N->left->parent = N->parent;
-					N->left->color = BLACK;
+						_root = N->_right_;
+					N->_left_->parent = N->parent;
+					N->_left_->color = BLACK;
 					_allocNode.deallocate(N, 1);
 					return ;
 				}
-				else if (N->right)			// N has 1 child (right)
+				else if (N->_right_)			// N has 1 child (_right_)
 				{
 					if (N->parent)
-						N->parent->child[childDir(N)] = N->right;
+						N->parent->child[childDir(N)] = N->_right_;
 					else
-						_root = N->right;
-					N->right->parent = N->parent;
-					N->right->color = BLACK;
+						_root = N->_right_;
+					N->_right_->parent = N->parent;
+					N->_right_->color = BLACK;
 					_allocNode.deallocate(N, 1);
 					return ;
 				}
@@ -456,9 +456,9 @@ namespace ft
 				if (areKeysEqual(key, node->value.first))
 					return iterator(node, _root);
 				else if (_compare(key, node->value.first))
-					node = node->left;
+					node = node->_left_;
 				else
-					node = node->right;
+					node = node->_right_;
 			}
 			return end();
 		}
@@ -472,9 +472,9 @@ namespace ft
 				if (areKeysEqual(key, node->value.first))
 					return const_iterator(node, _root);
 				else if (_compare(key, node->value.first))
-					node = node->left;
+					node = node->_left_;
 				else
-					node = node->right;
+					node = node->_right_;
 			}
 			return end();
 		}
@@ -497,10 +497,10 @@ namespace ft
 				if (!_compare(node->value.first, key))
 				{
 					ret = iterator(node, _root);
-					node = node->left;
+					node = node->_left_;
 				}
 				else
-					node = node->right;
+					node = node->_right_;
 			}
 			return (ret);
 		}
@@ -515,10 +515,10 @@ namespace ft
 				if (!_compare(node->value.first, key))
 				{
 					ret = const_iterator(node, _root);
-					node = node->left;
+					node = node->_left_;
 				}
 				else
-					node = node->right;
+					node = node->_right_;
 			}
 			return (ret);
 		}
@@ -533,10 +533,10 @@ namespace ft
 				if (_compare(key, node->value.first))
 				{
 					ret = iterator(node, _root);
-					node = node->left;
+					node = node->_left_;
 				}
 				else
-					node = node->right;
+					node = node->_right_;
 			}
 			return (ret);
 		}
@@ -551,10 +551,10 @@ namespace ft
 				if (_compare(key, node->value.first))
 				{
 					ret = const_iterator(node, _root);
-					node = node->left;
+					node = node->_left_;
 				}
 				else
-					node = node->right;
+					node = node->_right_;
 			}
 			return (ret);
 		}
@@ -589,15 +589,15 @@ namespace ft
 
 		Node *min(Node *node)
 		{
-			while (node && node->left)
-				node = node->left;
+			while (node && node->_left_)
+				node = node->_left_;
 			return (node);
 		}
 
 		Node *min(Node *node) const
 		{
-			while (node && node->left)
-				node = node->left;
+			while (node && node->_left_)
+				node = node->_left_;
 			return (node);
 		}
 
@@ -608,14 +608,14 @@ namespace ft
 				tmp.parent = n2;
 			else
 				tmp.parent = n2->parent;
-			if (n2->left == n1)
-				tmp.left = n2;
+			if (n2->_left_ == n1)
+				tmp._left_ = n2;
 			else
-				tmp.left = n2->left;
-			if (n2->right == n1)
-				tmp.right = n2;
+				tmp._left_ = n2->_left_;
+			if (n2->_right_ == n1)
+				tmp._right_ = n2;
 			else
-				tmp.right = n2->right;
+				tmp._right_ = n2->_right_;
 			tmp.color = n2->color;
 
 			// swap root
@@ -627,38 +627,38 @@ namespace ft
 			// swap n2 external dependencies
 			if (n2->parent && n2->parent != n1)
 				n2->parent->child[childDir(n2)] = n1;
-			if (n2->left && n2->left != n1)
-				n2->left->parent = n1;
-			if (n2->right && n2->right != n1)
-				n2->right->parent = n1;
+			if (n2->_left_ && n2->_left_ != n1)
+				n2->_left_->parent = n1;
+			if (n2->_right_ && n2->_right_ != n1)
+				n2->_right_->parent = n1;
 
 			// swap n2 internal dependencies
 			if (n1->parent == n2)
 				n2->parent = n1;
 			else
 				n2->parent = n1->parent;
-			if (n1->left == n2)
-				n2->left = n1;
+			if (n1->_left_ == n2)
+				n2->_left_ = n1;
 			else
-				n2->left = n1->left;
-			if (n1->right == n2)
-				n2->right = n1;
+				n2->_left_ = n1->_left_;
+			if (n1->_right_ == n2)
+				n2->_right_ = n1;
 			else
-				n2->right = n1->right;
+				n2->_right_ = n1->_right_;
 			n2->color = n1->color;
 
 			// swap n1 external dependencies
 			if (n1->parent)
 				n1->parent->child[childDir(n1)] = n2;
-			if (n1->left && n1->left != n2)
-				n1->left->parent = n2;
-			if (n1->right && n1->right != n2)
-				n1->right->parent = n2;
+			if (n1->_left_ && n1->_left_ != n2)
+				n1->_left_->parent = n2;
+			if (n1->_right_ && n1->_right_ != n2)
+				n1->_right_->parent = n2;
 			
 			// swap n1 internal dependencies
 			n1->parent = tmp.parent;
-			n1->left = tmp.left;
-			n1->right = tmp.right;
+			n1->_left_ = tmp._left_;
+			n1->_right_ = tmp._right_;
 			n1->color = tmp.color;
 		}
 

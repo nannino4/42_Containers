@@ -1,12 +1,12 @@
 #pragma once
 
-#include <iostream>
+#include <sstream>
 #include <string>
 
 struct testOutput
 {
 	float time;
-	std::string output;
+	std::stringstream output;
 };
 
 testOutput testVector(std::string ns, const int seed);

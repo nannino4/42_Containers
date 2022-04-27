@@ -1,9 +1,17 @@
 NAME			=	ft_containers
 NAME_BONUS		=	ft_containers_bonus
 
-SRCS			= 	main.cpp
+SRCS			= 	main.cpp \
+					tests/testVector.cpp \
+					tests/testStack.cpp \
+					tests/testMap.cpp
 OBJS			= 	$(SRCS:.cpp=.o)
-SRCS_BONUS		= 	main_bonus.cpp
+
+SRCS_BONUS		= 	main_bonus.cpp \
+					tests/testVector.cpp \
+					# tests/testStack.cpp \
+					# tests/testMap.cpp \
+					# tests/testSet.cpp
 OBJS_BONUS		= 	$(SRCS_BONUS:.cpp=.o)
 
 CFLAGS			= 	-Wall -Wextra -Werror
@@ -23,11 +31,10 @@ $(NAME_BONUS):	$(OBJS_BONUS)
 				$(CC) $(OBJS_BONUS) -o $(NAME_BONUS)
 
 clean:
-				rm -f $(OBJS)
+				rm -f $(OBJS_BONUS)
 
 fclean:			clean
-				rm -f $(NAME)
-
+				rm -f $(NAME) $(NAME_BONUS)
 
 re:				fclean all
 

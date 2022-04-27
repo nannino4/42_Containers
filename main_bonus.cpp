@@ -1,5 +1,6 @@
 
-#include <tests.hpp>
+#include <iostream>
+#include "./tests/tests.hpp"
 
 int error_exit(std::string s)
 {
@@ -23,29 +24,36 @@ int main(int argc, char** argv) {
 	ftOutput = testVector("FT", seed);
 	if ((ftOutput.time / stdOutput.time) > 20)
 		return (error_exit("ft::vector is too slow"));
-	if (ftOutput.output != stdOutput.output)
+	if (ftOutput.output.str().compare(stdOutput.output.str()))
 		return (error_exit("ft::vector has different outputs than std::vector"));
+	// std::cout << ftOutput.output.str() << std::endl << std::endl;
+	// std::cout << stdOutput.output.str() << std::endl << std::endl;
+	std::cout << "ft time: " << ftOutput.time << std::endl << std::endl;
+	std::cout << "std time: " << stdOutput.time << std::endl << std::endl;
 
-	stdOutput = testStack("STD", seed);
-	ftOutput = testStack("FT", seed);
-	if ((ftOutput.time / stdOutput.time) > 20)
-		return (error_exit("ft::stack is too slow"));
-	if (ftOutput.output != stdOutput.output)
-		return (error_exit("ft::stack has different outputs than std::stack"));
+	// // test stack
+	// stdOutput = testStack("STD", seed);
+	// ftOutput = testStack("FT", seed);
+	// if ((ftOutput.time / stdOutput.time) > 20)
+	// 	return (error_exit("ft::stack is too slow"));
+	// if (ftOutput.output.str().compare(stdOutput.output.str()))
+	// 	return (error_exit("ft::stack has different outputs than std::stack"));
 
-	stdOutput = testMap("STD", seed);
-	ftOutput = testMap("FT", seed);
-	if ((ftOutput.time / stdOutput.time) > 20)
-		return (error_exit("ft::map is too slow"));
-	if (ftOutput.output != stdOutput.output)
-		return (error_exit("ft::map has different outputs than std::map"));
+	// // test map
+	// stdOutput = testMap("STD", seed);
+	// ftOutput = testMap("FT", seed);
+	// if ((ftOutput.time / stdOutput.time) > 20)
+	// 	return (error_exit("ft::map is too slow"));
+	// if (ftOutput.output.str().compare(stdOutput.output.str()))
+	// 	return (error_exit("ft::map has different outputs than std::map"));
 
-	stdOutput = testSet("STD", seed);
-	ftOutput = testSet("FT", seed);
-	if ((ftOutput.time / stdOutput.time) > 20)
-		return (error_exit("ft::set is too slow"));
-	if (ftOutput.output != stdOutput.output)
-		return (error_exit("ft::set has different outputs than std::set"));
+	// // test set
+	// stdOutput = testSet("STD", seed);
+	// ftOutput = testSet("FT", seed);
+	// if ((ftOutput.time / stdOutput.time) > 20)
+	// 	return (error_exit("ft::set is too slow"));
+	// if (ftOutput.output.str().compare(stdOutput.output.str()))
+	// 	return (error_exit("ft::set has different outputs than std::set"));
 
 	std::cout << "all tests passed successfully!" << std::endl;
 
