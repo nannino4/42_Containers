@@ -22,9 +22,9 @@ namespace ft
     //------------------------------------------------------------- */
     // ATTRIBUTES
     //------------------------------------------------------------- */
-	private:
+	protected:
 
-		container_type _container;
+		container_type c;
 
 
     //------------------------------------------------------------- */
@@ -33,7 +33,7 @@ namespace ft
 	public:
 
 		// default constructor
-		explicit stack(const container_type &ctnr = container_type()) : _container(ctnr) {}
+		explicit stack(const container_type &ctnr = container_type()) : c(ctnr) {}
 
 
     //------------------------------------------------------------- */
@@ -41,16 +41,16 @@ namespace ft
     //------------------------------------------------------------- */
 	public:
 
-		bool empty() const { return _container.empty(); }
+		bool empty() const { return c.empty(); }
 
-		size_type size() const { return _container.size(); }
+		size_type size() const { return c.size(); }
 
-		value_type &top() { return _container.back(); }
-		const value_type &top() const { return _container.back(); }
+		value_type &top() { return c.back(); }
+		const value_type &top() const { return c.back(); }
 
-		void push(const value_type &value) { _container.push_back(value); }
+		void push(const value_type &value) { c.push_back(value); }
 
-		void pop() { _container.pop_back(); }
+		void pop() { c.pop_back(); }
 
 
     //------------------------------------------------------------- */
@@ -76,37 +76,37 @@ namespace ft
 	template <class type, class ctnr>
 	bool operator==(const stack<type, ctnr> &lhs, const stack<type, ctnr> &rhs)
 	{
-		return lhs._container == rhs._container;
+		return lhs.c == rhs.c;
 	}
 
 	template <class type, class ctnr>
 	bool operator!=(const stack<type, ctnr> &lhs, const stack<type, ctnr> &rhs)
 	{
-		return lhs._container != rhs._container;
+		return lhs.c != rhs.c;
 	}
 
 	template <class type, class ctnr>
 	bool operator<(const stack<type, ctnr> &lhs, const stack<type, ctnr> &rhs)
 	{
-		return lhs._container < rhs._container;
+		return lhs.c < rhs.c;
 	}
 
 	template <class type, class ctnr>
 	bool operator<=(const stack<type, ctnr> &lhs, const stack<type, ctnr> &rhs)
 	{
-		return lhs._container <= rhs._container;
+		return lhs.c <= rhs.c;
 	}
 
 	template <class type, class ctnr>
 	bool operator>(const stack<type, ctnr> &lhs, const stack<type, ctnr> &rhs)
 	{
-		return lhs._container > rhs._container;
+		return lhs.c > rhs.c;
 	}
 
 	template <class type, class ctnr>
 	bool operator>=(const stack<type, ctnr> &lhs, const stack<type, ctnr> &rhs)
 	{
-		return lhs._container >= rhs._container;
+		return lhs.c >= rhs.c;
 	}
 
 } // namepace ft

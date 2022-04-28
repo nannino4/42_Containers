@@ -6,7 +6,7 @@
 struct testOutput
 {
 	float time;
-	std::stringstream output;
+	std::string output;
 };
 
 testOutput testVector(std::string ns, const int seed);

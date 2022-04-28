@@ -9,8 +9,8 @@ OBJS			= 	$(SRCS:.cpp=.o)
 
 SRCS_BONUS		= 	main_bonus.cpp \
 					tests/testVector.cpp \
-					# tests/testStack.cpp \
-					# tests/testMap.cpp \
+					tests/testStack.cpp \
+					tests/testMap.cpp \
 					# tests/testSet.cpp
 OBJS_BONUS		= 	$(SRCS_BONUS:.cpp=.o)
 

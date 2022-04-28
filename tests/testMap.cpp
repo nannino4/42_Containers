@@ -1,94 +1,82 @@
-#include <iostream>
 #include <string>
 #include <vector>
-#include <vector.hpp>
+#include <sys/time.h>
 
-template<typename T>
-class MutantStack : public ft::stack<T>
-{
-public:
-	MutantStack() {}
-	MutantStack(const MutantStack<T>& src) { *this = src; }
-	MutantStack<T>& operator=(const MutantStack<T>& rhs) 
-	{
-		this->c = rhs.c;
-		return *this;
-	}
-	~MutantStack() {}
+#include "tests.hpp"
+#include "../containers/map.hpp"
 
-	typedef typename ft::stack<T>::container_type::iterator iterator;
+#define COUNT 10
 
-	iterator begin() { return this->c.begin(); }
-	iterator end() { return this->c.end(); }
-};
-
-testOutput testVector(std::string ns, const char seed)
+testOutput testMap(std::string ns, const int seed)
 {
 	if (ns.compare("STD"))
 		namespace ft = std;
-	else if (!ns.compare("FT"))
-	{
-		std::cerr << "Provide: \"STD\"/\"FT\" seed" << std::endl;
-	}
-	const int seed = atoi(argv[1]);
 	srand(seed);
 
-	ft::vector<std::string> vector_str;
-	ft::vector<int> vector_int;
-	ft::stack<int> stack_int;
-	ft::vector<Buffer> vector_buffer;
-	ft::stack<Buffer, std::deque<Buffer> > stack_deq_buffer;
+	testOutput ret;
+	std::stringstream output;
+	output << std::boolalpha;
+	struct timeval time_start;
+	struct timeval time_end;
+	gettimeofday(&time_start, NULL);
+
+/**************************************************************************************************
+ * start tests
+**************************************************************************************************/
 	ft::map<int, int> map_int;
 
-	for (int i = 0; i < COUNT; i++)
-	{
-		vector_buffer.push_back(Buffer());
-	}
-
-	for (int i = 0; i < COUNT; i++)
-	{
-		const int idx = rand() % COUNT;
-		vector_buffer[idx].idx = 5;
-	}
-	ft::vector<Buffer>().swap(vector_buffer);
-
-	try
-	{
-		for (int i = 0; i < COUNT; i++)
-		{
-			const int idx = rand() % COUNT;
-			vector_buffer.at(idx);
-			std::cerr << "Error: THIS VECTOR SHOULD BE EMPTY!!" <<std::endl;
-		}
-	}
-	catch(const std::exception& e)
-	{
-		//NORMAL ! :P
-	}
-	
 	for (int i = 0; i < COUNT; ++i)
 	{
 		map_int.insert(ft::make_pair(rand(), rand()));
 	}
 
-	int sum = 0;
-	for (int i = 0; i < 10000; i++)
 	{
-		int access = rand();
-		sum += map_int[access];
+		ft::map<int,int> tmp(map_int.begin() + (rand() % (map_int.size() / 2)), map_int.end());
+		map_int.insert(tmp.begin(), tmp.end());
 	}
-	std::cout << "should be constant with the same seed: " << sum << std::endl;
 
+	map_int.erase(map_int.begin() + (rand() % (map_int.size() / 2)), map_int.end());
+
+// print //////////
+	for (int i = 0; i < COUNT; ++i)
 	{
-		ft::map<int, int> copy = map_int;
+		output << (map_int.find((map_int.begin() + (rand() % (map_int.size() - 1)))->first))->first << std::endl;
+		output << map_int.lower_bound(rand())->first << std::endl;
+		output << map_int[rand()] << std::endl;
 	}
-	MutantStack<char> iterable_stack;
-	for (char letter = 'a'; letter <= 'z'; letter++)
-		iterable_stack.push(letter);
-	for (MutantStack<char>::iterator it = iterable_stack.begin(); it != iterable_stack.end(); it++)
+
+	ft::map<int, int> map_copy = map_int;
+	output << (map_int == map_copy) << std::endl;		// true
+	output << (map_int <= map_copy) << std::endl;		// true
+	output << (map_int < map_copy) << std::endl;		// false
+	output << (map_int >= map_copy) << std::endl;		// true
+	output << (map_int > map_copy) << std::endl;		// false
+
+	for (ft::map<int,int>::iterator it = map_int.begin(), it_copy = map_copy.begin(); it != map_int.end(); ++it, ++it_copy)
 	{
-		std::cout << *it;
+		output << (*it).first << " " << (*it).second << std::endl;
+		output << (*it_copy).first << " " << (*it_copy).second << std::endl;
 	}
-	std::cout << std::endl;
-	return (0);
+	for (ft::map<int,int>::reverse_iterator it = map_int.rbegin(), it_copy = map_copy.rbegin(); it != map_int.rend(); ++it, ++it_copy)
+	{
+		output << (*it).first << " " << (*it).second << std::endl;
+		output << (*it_copy).first << " " << (*it_copy).second << std::endl;
+	}
+
+	map_int.insert(ft::make_pair<int,int>(rand(),rand()));
+	output << (map_int == map_copy) << std::endl;		// false
+	output << (map_int <= map_copy) << std::endl;		// ?
+	output << (map_int < map_copy) << std::endl;		// ?
+	output << (map_int >= map_copy) << std::endl;		// ?
+	output << (map_int > map_copy) << std::endl;		// ?
+///////////////////
+
+/**************************************************************************************************
+ * end tests
+**************************************************************************************************/
+
+	gettimeofday(&time_end, NULL);
+	ret.time = time_end.tv_sec - time_start.tv_sec + 1e-6 * (time_end.tv_usec - time_start.tv_usec);
+	ret.output = output.str();
+	return ret;
 }

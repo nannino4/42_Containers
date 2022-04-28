@@ -5,6 +5,8 @@
 #include "tests.hpp"
 #include "../containers/stack.hpp"
 
+#define COUNT 10
+
 template<typename T>
 class MutantStack : public ft::stack<T>
 {
@@ -24,73 +26,78 @@ public:
 	iterator end() { return this->c.end(); }
 };
 
-testOutput testVector(std::string ns, const char seed)
+testOutput testStack(std::string ns, const int seed)
 {
 	if (ns.compare("STD"))
 		namespace ft = std;
-	else if (!ns.compare("FT"))
-	{
-		std::cerr << "Provide: \"STD\"/\"FT\" seed" << std::endl;
-	}
-	const int seed = atoi(argv[1]);
 	srand(seed);
 
-	ft::vector<std::string> vector_str;
-	ft::vector<int> vector_int;
-	ft::stack<int> stack_int;
-	ft::vector<Buffer> vector_buffer;
-	ft::stack<Buffer, std::deque<Buffer> > stack_deq_buffer;
-	ft::map<int, int> map_int;
+	testOutput ret;
+	std::stringstream output;
+	output << std::boolalpha;
+	struct timeval time_start;
+	struct timeval time_end;
+	gettimeofday(&time_start, NULL);
 
-	for (int i = 0; i < COUNT; i++)
-	{
-		vector_buffer.push_back(Buffer());
-	}
+/**************************************************************************************************
+ * start tests
+**************************************************************************************************/
 
-	for (int i = 0; i < COUNT; i++)
-	{
-		const int idx = rand() % COUNT;
-		vector_buffer[idx].idx = 5;
-	}
-	ft::vector<Buffer>().swap(vector_buffer);
+	ft::stack<int> stack_int(ft::vector<int>(COUNT, 42));
+	ft::stack<int> stack_int_copy(ft::vector<int>(COUNT, 42));
+	ft::stack<std::string, std::deque<std::string> > stack_deq_str;
+	MutantStack<char> stack_iter;
 
-	try
-	{
-		for (int i = 0; i < COUNT; i++)
-		{
-			const int idx = rand() % COUNT;
-			vector_buffer.at(idx);
-			std::cerr << "Error: THIS VECTOR SHOULD BE EMPTY!!" <<std::endl;
-		}
-	}
-	catch(const std::exception& e)
-	{
-		//NORMAL ! :P
-	}
-	
+	output << (stack_int == stack_int_copy) << std::endl;		// true
+	output << (stack_int < stack_int_copy) << std::endl;		// false
+	output << (stack_int <= stack_int_copy) << std::endl;		// true
+	output << (stack_int >= stack_int_copy) << std::endl;		// true
+
 	for (int i = 0; i < COUNT; ++i)
 	{
-		map_int.insert(ft::make_pair(rand(), rand()));
+		stack_iter.push((rand() % 93) + 33);
+		stack_int_copy.push(rand());
+		stack_deq_str.push("ciao");
 	}
 
-	int sum = 0;
-	for (int i = 0; i < 10000; i++)
-	{
-		int access = rand();
-		sum += map_int[access];
-	}
-	std::cout << "should be constant with the same seed: " << sum << std::endl;
+	output << (stack_int == stack_int_copy) << std::endl;		// false
+	output << (stack_int < stack_int_copy) << std::endl;		// true
+	output << (stack_int <= stack_int_copy) << std::endl;		// true
+	output << (stack_int >= stack_int_copy) << std::endl;		// false
 
+// print //////////
+	for (MutantStack<char>::iterator it = stack_iter.begin(); it != stack_iter.end(); ++it)
 	{
-		ft::map<int, int> copy = map_int;
+		output << *it << std::endl;
 	}
-	MutantStack<char> iterable_stack;
-	for (char letter = 'a'; letter <= 'z'; letter++)
-		iterable_stack.push(letter);
-	for (MutantStack<char>::iterator it = iterable_stack.begin(); it != iterable_stack.end(); it++)
+	while (stack_deq_str.size())
 	{
-		std::cout << *it;
+		output << stack_deq_str.top() << std::endl;
+		stack_deq_str.pop();
 	}
-	std::cout << std::endl;
-	return (0);
+	
+	while (stack_int.size() && stack_int_copy.size())
+	{
+		output << stack_int.top() << std::endl;
+		output << stack_int_copy.top() << std::endl;
+		stack_int.pop();
+		stack_int_copy.pop();
+	}
+	output << stack_int.size() << " " << stack_int.empty() << std::endl;
+	output << stack_int_copy.size() << " " << stack_int_copy.empty() << std::endl;
+	while (stack_int.size() && stack_int_copy.size())
+	{
+		output << stack_int_copy.top() << std::endl;
+		stack_int_copy.pop();
+	}
+///////////////////
+
+/**************************************************************************************************
+ * end tests
+**************************************************************************************************/
+
+	gettimeofday(&time_end, NULL);
+	ret.time = time_end.tv_sec - time_start.tv_sec + 1e-6 * (time_end.tv_usec - time_start.tv_usec);
+	ret.output = output.str();
+	return ret;
 }
