@@ -1,11 +1,12 @@
 #include <string>
 #include <stack>
+#include <vector>
 #include <sys/time.h>
 
 #include "tests.hpp"
 #include "../containers/stack.hpp"
 
-#define COUNT 10
+#define COUNT 4
 
 template<typename T>
 class MutantStack : public ft::stack<T>
@@ -26,10 +27,9 @@ public:
 	iterator end() { return this->c.end(); }
 };
 
-testOutput testStack(std::string ns, const int seed)
+testOutput testStack(bool isSTD, const int seed)
 {
-	if (ns.compare("STD"))
-		namespace ft = std;
+	namespace ft = (isSTD > 0) ? std : ft;
 	srand(seed);
 
 	testOutput ret;
@@ -43,8 +43,8 @@ testOutput testStack(std::string ns, const int seed)
  * start tests
 **************************************************************************************************/
 
-	ft::stack<int> stack_int(ft::vector<int>(COUNT, 42));
-	ft::stack<int> stack_int_copy(ft::vector<int>(COUNT, 42));
+	ft::stack<int> stack_int(ft::stack<int>::container_type(COUNT, 42));
+	ft::stack<int> stack_int_copy(ft::stack<int>::container_type(COUNT, 42));
 	ft::stack<std::string, std::deque<std::string> > stack_deq_str;
 	MutantStack<char> stack_iter;
 

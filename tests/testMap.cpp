@@ -1,5 +1,5 @@
 #include <string>
-#include <vector>
+#include <map>
 #include <sys/time.h>
 
 #include "tests.hpp"
@@ -7,9 +7,9 @@
 
 #define COUNT 10
 
-testOutput testMap(std::string ns, const int seed)
+testOutput testMap(bool isSTD, const int seed)
 {
-	if (ns.compare("STD"))
+	if (isSTD)
 		namespace ft = std;
 	srand(seed);
 

@@ -7,9 +7,9 @@
 
 #define COUNT 10
 
-testOutput testVector(std::string ns, const int seed)
+testOutput testVector(bool isSTD, const int seed)
 {
-	if (ns.compare("STD"))
+	if (isSTD)
 		namespace ft = std;
 	srand(seed);
 

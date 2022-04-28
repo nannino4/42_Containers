@@ -9,7 +9,7 @@ struct testOutput
 	std::string output;
 };
 
-testOutput testVector(std::string ns, const int seed);
-testOutput testStack(std::string ns, const int seed);
-testOutput testMap(std::string ns, const int seed);
-testOutput testSet(std::string ns, const int seed);
+testOutput testVector(bool isSTD, const int seed);
+testOutput testStack(bool isSTD, const int seed);
+testOutput testMap(bool isSTD, const int seed);
+testOutput testSet(bool isSTD, const int seed);
