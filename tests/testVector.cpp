@@ -1,20 +1,25 @@
 #include <string>
-#include <vector>
 #include <sys/time.h>
+#include <fstream>
 
 #include "tests.hpp"
-#include "../containers/vector.hpp"
 
-#define COUNT 10
+#ifdef USE_STD
+	namespace ft = std;
+	#include <vector>
+	#define FILENAME "output_vector_std.txt"
+#else
+	#include "../containers/vector.hpp"
+	#define FILENAME "output_vector_ft.txt"
+#endif
 
-testOutput testVector(bool isSTD, const int seed)
+void testVector(const int seed)
 {
-	if (isSTD)
-		namespace ft = std;
 	srand(seed);
 
-	testOutput ret;
-	std::stringstream output;
+	std::string filename(FILENAME);
+	std::ofstream output;
+	output.open("outputs/" + filename, std::ofstream::trunc);
 	output << std::boolalpha;
 	struct timeval time_start;
 	struct timeval time_end;
@@ -61,7 +66,7 @@ testOutput testVector(bool isSTD, const int seed)
 
 	vec_int.assign(COUNT / 2, rand());
 	vec_int.pop_back();
-	vec_int.insert(ft::vector<int>::iterator(&vec_int[rand() % (vec_int.size() - 1)]), COUNT / 2, rand());
+	vec_int.insert(vec_int.begin() + ft::vector<int>::difference_type(&vec_int[rand() % (vec_int.size() - 1)] - &vec_int[0]), COUNT / 2, rand());
 	vec_int.erase(vec_int.begin(), vec_int.begin() + (rand() % (vec_int.size() / 2)));
 
 // print vec_int //
@@ -74,7 +79,7 @@ testOutput testVector(bool isSTD, const int seed)
 **************************************************************************************************/
 
 	gettimeofday(&time_end, NULL);
-	ret.time = time_end.tv_sec - time_start.tv_sec + 1e-6 * (time_end.tv_usec - time_start.tv_usec);
-	ret.output = output.str();
-	return ret;
+	output.close();
+	output.open("performances/" + filename);
+	output << time_end.tv_sec - time_start.tv_sec + 1e-6 * (time_end.tv_usec - time_start.tv_usec);
 }

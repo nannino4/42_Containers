@@ -76,7 +76,7 @@ namespace ft
 	template <class type, class ctnr>
 	bool operator==(const stack<type, ctnr> &lhs, const stack<type, ctnr> &rhs)
 	{
-		return lhs.c != rhs.c; // TODO change
+		return lhs.c == rhs.c;
 	}
 
 	template <class type, class ctnr>

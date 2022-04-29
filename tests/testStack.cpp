@@ -1,12 +1,19 @@
 #include <string>
-#include <stack>
-#include <vector>
+#include <deque>
 #include <sys/time.h>
+#include <fstream>
 
 #include "tests.hpp"
-#include "../containers/stack.hpp"
 
-#define COUNT 4
+#ifdef USE_STD
+	namespace ft = std;
+	#include <stack>
+	#include <vector>
+	#define FILENAME "output_stack_std.txt"
+#else
+	#include "../containers/stack.hpp"
+	#define FILENAME "output_stack_ft.txt"
+#endif
 
 template<typename T>
 class MutantStack : public ft::stack<T>
@@ -27,13 +34,13 @@ public:
 	iterator end() { return this->c.end(); }
 };
 
-testOutput testStack(bool isSTD, const int seed)
+void testStack(const int seed)
 {
-	namespace ft = (isSTD > 0) ? std : ft;
 	srand(seed);
 
-	testOutput ret;
-	std::stringstream output;
+	std::string filename(FILENAME);
+	std::ofstream output;
+	output.open("outputs/" + filename, std::ofstream::trunc);
 	output << std::boolalpha;
 	struct timeval time_start;
 	struct timeval time_end;
@@ -97,7 +104,7 @@ testOutput testStack(bool isSTD, const int seed)
 **************************************************************************************************/
 
 	gettimeofday(&time_end, NULL);
-	ret.time = time_end.tv_sec - time_start.tv_sec + 1e-6 * (time_end.tv_usec - time_start.tv_usec);
-	ret.output = output.str();
-	return ret;
+	output.close();
+	output.open("performances/" + filename);
+	output << time_end.tv_sec - time_start.tv_sec + 1e-6 * (time_end.tv_usec - time_start.tv_usec);
 }

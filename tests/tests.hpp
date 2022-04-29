@@ -1,15 +1,10 @@
 #pragma once
 
 #include <sstream>
-#include <string>
 
-struct testOutput
-{
-	float time;
-	std::string output;
-};
+#define COUNT 1000
 
-testOutput testVector(bool isSTD, const int seed);
-testOutput testStack(bool isSTD, const int seed);
-testOutput testMap(bool isSTD, const int seed);
-testOutput testSet(bool isSTD, const int seed);
+void testVector(const int seed);
+void testStack(const int seed);
+void testMap(const int seed);
+void testSet(const int seed);

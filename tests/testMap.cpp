@@ -7,10 +7,8 @@
 
 #define COUNT 10
 
-testOutput testMap(bool isSTD, const int seed)
+testOutput testMap(const int seed)
 {
-	if (isSTD)
-		namespace ft = std;
 	srand(seed);
 
 	testOutput ret;

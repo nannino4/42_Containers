@@ -58,6 +58,10 @@ namespace ft
 		typedef const T&								reference;
 		typedef ft::random_access_iterator_tag			iterator_category;
 	};
+
+	/*
+	**	distance:
+	*/
 	
 	template<class InputIt>
 	typename ft::iterator_traits<InputIt>::difference_type	distance(InputIt first, InputIt last) {
