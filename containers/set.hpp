@@ -5,6 +5,8 @@
 #include "pair.hpp"
 #include "bidirectional_iterator.hpp"
 #include "reverse_iterator.hpp"
+#include "equal.hpp"
+#include "lexicographical_compare.hpp"
 
 #define BLACK		0
 #define RED			1
@@ -12,7 +14,7 @@
 #define RIGHT		1
 #define _left_		child[LEFT]
 #define _right_		child[RIGHT]
-#define childDir(N) ( N == (N->parent)->_right_ ? RIGHT : _left_ )
+#define childDir(N) ( N == (N->parent)->_right_ ? RIGHT : LEFT )
 
 namespace ft
 {
@@ -46,7 +48,7 @@ namespace ft
 		typedef typename allocator_type::pointer					pointer;
 		typedef typename allocator_type::const_pointer				const_pointer;
 
-		typedef ft::bidirectional_iterator<value_type,Node>			iterator;
+		typedef ft::bidirectional_iterator<const value_type,Node>	iterator;
 		typedef ft::bidirectional_iterator<const value_type,Node>	const_iterator;
 		typedef ft::reverse_iterator<iterator>						reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator>				const_reverse_iterator;

@@ -1,18 +1,25 @@
 #include <string>
-#include <map>
 #include <sys/time.h>
+#include <fstream>
 
 #include "tests.hpp"
-#include "../containers/map.hpp"
 
-#define COUNT 10
+#ifdef USE_STD
+	namespace ft = std;
+	#include <map>
+	#define FILENAME "output_map_std.txt"
+#else
+	#include "../containers/map.hpp"
+	#define FILENAME "output_map_ft.txt"
+#endif
 
-testOutput testMap(const int seed)
+void testMap(const int seed)
 {
 	srand(seed);
 
-	testOutput ret;
-	std::stringstream output;
+	std::string filename(FILENAME);
+	std::ofstream output;
+	output.open("outputs/" + filename, std::ofstream::trunc);
 	output << std::boolalpha;
 	struct timeval time_start;
 	struct timeval time_end;
@@ -24,22 +31,33 @@ testOutput testMap(const int seed)
 	ft::map<int, int> map_int;
 
 	for (int i = 0; i < COUNT; ++i)
-	{
 		map_int.insert(ft::make_pair(rand(), rand()));
-	}
 
 	{
-		ft::map<int,int> tmp(map_int.begin() + (rand() % (map_int.size() / 2)), map_int.end());
+		ft::map<int,int>::iterator it = map_int.begin();
+		for (size_t i = 0; i < (rand() % (map_int.size() / 2)); ++i)
+			++it;
+		ft::map<int,int> tmp(it, map_int.end());
+		for (int i = 0; i < COUNT; ++i)
+			tmp.insert(ft::make_pair(rand(), rand()));
 		map_int.insert(tmp.begin(), tmp.end());
 	}
-
-	map_int.erase(map_int.begin() + (rand() % (map_int.size() / 2)), map_int.end());
+	{
+		ft::map<int,int>::iterator it = map_int.begin();
+		for (size_t i = 0; i < (rand() % (map_int.size() / 2)); ++i)
+			++it;
+		map_int.erase(it, map_int.end());
+	}
 
 // print //////////
 	for (int i = 0; i < COUNT; ++i)
 	{
-		output << (map_int.find((map_int.begin() + (rand() % (map_int.size() - 1)))->first))->first << std::endl;
-		output << map_int.lower_bound(rand())->first << std::endl;
+		ft::map<int,int>::iterator it = map_int.begin();
+		for (size_t i = 0; i < (rand() % (map_int.size() / 2)); ++i)
+			++it;
+		output << (map_int.find(it->first))->first << std::endl;
+		if ((it = map_int.lower_bound(rand())) != map_int.end())
+		output << it->first << std::endl;
 		output << map_int[rand()] << std::endl;
 	}
 
@@ -74,7 +92,7 @@ testOutput testMap(const int seed)
 **************************************************************************************************/
 
 	gettimeofday(&time_end, NULL);
-	ret.time = time_end.tv_sec - time_start.tv_sec + 1e-6 * (time_end.tv_usec - time_start.tv_usec);
-	ret.output = output.str();
-	return ret;
+	output.close();
+	output.open("performances/" + filename);
+	output << time_end.tv_sec - time_start.tv_sec + 1e-6 * (time_end.tv_usec - time_start.tv_usec);
 }

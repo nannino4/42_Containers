@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
 	testStack(seed);
 
 	// test map
-	// testMap(seed);
+	testMap(seed);
 
 	return (0);
 }
